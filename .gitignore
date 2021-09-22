@@ -21,6 +21,7 @@ sdist/
 var/
 wheels/
 share/python-wheels/
+venv/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -57,6 +58,7 @@ cover/
 
 # Django stuff:
 *.log
+*.db
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
