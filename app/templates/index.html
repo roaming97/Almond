@@ -3,34 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Almond</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
 </head>
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        top: 0;
-    }
-    html,
-    body {
-        overflow-x: hidden;
-    }
-    .content {
-        margin: auto;
-        text-align: center;
-        padding: 1em;
-    }
-
-    @media (min-width:1000px) {
-        .content {
-            max-width: 1000px;
-        }
-    }
-</style>
 <body>
 <div class="content">
     <h1>Almond</h1>
     <p>Video database for archival purposes.</p>
     <hr/>
+    {% block videos %}
+    {% if data %}
+        {% for video in data %}
+            <h2>{{video.title}}</h2>
+            <p>By {{video.author}}</p>
+            <p>By {{video.description}}</p>
+            <p>By {{video.date}}</p>
+        {% endfor %}
+    {% else %}
+        <h3>(No videos yet)</h3>
+    {% endif %}
+    {% endblock videos %}
 </div>
 </body>
 

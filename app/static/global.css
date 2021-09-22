@@ -1,0 +1,26 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    top: 0;
+}
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+h3 {
+    color: #888;
+}
+
+.content {
+    margin: auto;
+    text-align: center;
+    padding: 1em;
+}
+
+@media (min-width:1000px) {
+    .content {
+        max-width: 1000px;
+    }
+}
