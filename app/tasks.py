@@ -2,8 +2,7 @@ from app import db
 from app import models
 
 
-def create_database():
-    db.create_all()
+def create_db(): db.create_all()
 
 
 def register_data(**kwargs):

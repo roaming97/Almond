@@ -13,7 +13,7 @@ class Video(db.Model):
     date = db.Column(db.String(25), nullable=False)
     likes = db.Column(db.Integer, nullable=True)
     dislikes = db.Column(db.Integer, nullable=True)
-    subscribers = db.Column(db.String(20), nullable=True)
+    subscribers = db.Column(db.Integer, nullable=True)
     # stream = db.Column(db.LargeBinary, unique=True, nullable=False)
     thumbnail = db.Column(db.String(50), nullable=True, default='thumb.jpg')
     profile_picture = db.Column(db.String(50), nullable=True, default='profile.jpg')

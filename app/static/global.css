@@ -9,11 +9,34 @@ body {
     overflow-x: hidden;
 }
 
-h3 {
-    color: #888;
+.deco {
+    color: #aaa;
+}
+
+hr {
+    width: 100%;
+}
+
+.video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 75%;
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
+    padding: 0.5rem;
+    margin: 2rem;
+    border-radius: 0.75em;
+}
+
+.video p {
+    line-height: 1vh;
+    font-size: 0.75rem;
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin: auto;
     text-align: center;
     padding: 1em;
@@ -22,5 +45,14 @@ h3 {
 @media (min-width:1000px) {
     .content {
         max-width: 1000px;
+    }
+    .video {
+        align-items: initial;
+        padding: 1.5rem;
+        text-align: left;
+    }
+    .video p {
+        line-height: 0.4em;
+        font-size: 1rem;
     }
 }
