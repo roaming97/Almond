@@ -1,5 +1,4 @@
 from flask import render_template
-from datetime import datetime
 from app import app
 
 dummy = [
@@ -7,13 +6,13 @@ dummy = [
         'title': 'sample video 1',
         'author': 'myself',
         'description': 'my video',
-        'date': datetime.strptime("01/01/2009","%m/%d/%Y").strftime('%m/%d/%Y')
+        'date': 'January 1, 2009'
     },
     {
         'title': 'sample video 2',
         'author': 'myself again',
         'description': 'my second video',
-        'date': datetime.strptime("11/04/2012","%m/%d/%Y").strftime('%m/%d/%Y')
+        'date': 'October 15, 2012'
     },
 ]
 

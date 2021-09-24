@@ -1,13 +1,24 @@
-
 from app import db
 from app import models
 
+
 def create_database():
     db.create_all()
-    db.session.close()
 
-def register_data(title, author, description, views, date, likes, dislikes, subscribers, url, thumbnail, profile_picture):    
-    data = models.Video(title=title, author=author, description=description, views=views, date=date, likes=likes, dislikes=dislikes, subscribers=subscribers, url=url, thumbnail=thumbnail, profile_picture=profile_picture)
+
+def register_data(**kwargs):
+    data = models.Video(
+        title=kwargs.get('title', 'Untitled'),
+        author=kwargs.get('author', 'User'),
+        description=kwargs.get('description', ''),
+        views=kwargs['views'],
+        date=kwargs['date'],
+        likes=kwargs.get('likes', '?'),
+        dislikes=kwargs.get('dislikes', '?'),
+        subscribers=kwargs.get('subscribers', '?'),
+        url=kwargs['url'],
+        thumbnail=kwargs.get('thumbnail', 'thumb.jpg'),
+        profile_picture=kwargs.get('profile_picture', 'profile.jpg')
+    )
     db.session.add(data)
     db.session.commit()
-    db.session.close()
