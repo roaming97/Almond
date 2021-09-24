@@ -1,0 +1,16 @@
+{% extends "template.html" %} {% block content %}
+<div class="form-container">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Quick add</legend>
+            <div class="form-field">
+                {{ form.url.label(class="form-control-label") }} {{ form.url(class="form-control") }}
+            </div>
+        </fieldset>
+        <div class="form-btn">
+            {{ form.submit(class="btn btn-outline-success") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
