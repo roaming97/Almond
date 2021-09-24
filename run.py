@@ -1,5 +1,7 @@
+from dotenv import load_dotenv
+load_dotenv()
 from app import app
+from os import getenv
 
-# Running the app directly from Python
 if __name__ == "__main__":
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=getenv('PORT'))
