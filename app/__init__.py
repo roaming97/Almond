@@ -1,8 +1,8 @@
-from flask import Flask
-from app import forms
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 load_dotenv()
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from app import forms
 from os import getenv
 
 app = Flask(__name__, template_folder='templates')

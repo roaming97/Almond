@@ -1,6 +1,6 @@
+import os
 from app import db
 from app import models
-import os
 
 
 def create_db():

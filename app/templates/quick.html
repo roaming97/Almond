@@ -5,7 +5,12 @@
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Quick add</legend>
             <div class="form-field">
-                {{ form.url.label(class="form-control-label") }} {{ form.url(class="form-control") }}
+                {{ form.url.label(class="form-control-label") }} {% if form.url.errors %} {{ form.url(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for e in form.url.errors %}
+                    <span>{{ e }}</span> {% endfor %}
+                </div>
+                {% else %} {{ form.url(class="form-control") }} {% endif %}
             </div>
         </fieldset>
         <div class="form-btn">

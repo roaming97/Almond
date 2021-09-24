@@ -26,16 +26,26 @@ hr {
 }
 
 .form-container {
-    width: 100%;
     box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
     padding: 0.5rem;
     margin: 2rem;
     border-radius: 0.75em;
 }
 
+.form-container,
+.alert {
+    width: 100%;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
+}
+
+.invalid-feedback {
+    width: auto;
+    font-size: 0.75rem;
+    margin: 0.25rem;
 }
 
 .form-field {
@@ -52,13 +62,13 @@ hr {
     margin: 0.5rem;
 }
 
-.form-control {
-    width: 100%;
-}
-
 .form-btn {
     width: 100%;
     margin: 0.75rem;
+}
+
+.alert {
+    width: 100%;
 }
 
 .tohome:hover>h1,
@@ -107,7 +117,8 @@ hr {
         line-height: 0.4em;
         font-size: 1rem;
     }
-    .form-container {
+    .form-container,
+    .alert {
         width: 85%;
     }
     .form-field {
