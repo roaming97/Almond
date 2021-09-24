@@ -10,7 +10,7 @@ body {
 }
 
 .deco {
-    color: #aaa;
+    color: var(--bs-gray-400);
 }
 
 hr {

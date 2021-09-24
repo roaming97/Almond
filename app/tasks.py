@@ -1,8 +1,14 @@
 from app import db
 from app import models
+from dotenv import load_dotenv
+load_dotenv()
+from os import getenv
+from os.path import exists
 
 
-def create_db(): db.create_all()
+def create_db():
+    if not (exists(getenv("DATABASE_URI"))):
+        db.create_all()
 
 
 def register_data(**kwargs):
