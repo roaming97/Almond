@@ -1,10 +1,11 @@
-import os
+from os import getenv
+from os.path import exists
 from app import db
 from app import models
 
 
 def create_db():
-    if not (os.path.exists(os.getenv("DATABASE_URI"))):
+    if not (exists(getenv("DATABASE_URI"))):
         db.create_all()
 
 
