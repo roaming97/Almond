@@ -64,8 +64,9 @@ hr {
 }
 
 .form-btn {
-    width: 100%;
-    margin: 0.75rem;
+    margin: 0.5rem 0 0 0;
+    flex-direction: column;
+    align-items: center;
 }
 
 .alert {
@@ -78,6 +79,47 @@ hr {
 .tohome {
     color: var(--bs-body-color);
     text-decoration: none;
+}
+
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 48px;
+    height: 48px;
+}
+
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    margin: 8px;
+    border: 8px solid #3e6cd1;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #3e6cd1 transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.35s;
+}
+
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.2s;
+}
+
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .video {
@@ -137,10 +179,10 @@ hr {
         margin-right: 1rem;
     }
     .form-control {
-        width: 80%;
+        width: 75%;
     }
     .form-btn {
-        width: 93.34%;
+        margin: 0.75rem;
         display: flex;
         flex-direction: row-reverse;
         align-items: flex-start;

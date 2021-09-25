@@ -1,5 +1,8 @@
+import os
+
 from flask import render_template, url_for, flash, redirect
 from app import app, forms, settings
+from os import getenv
 
 
 # Routes
@@ -9,8 +12,11 @@ from app import app, forms, settings
 def index():
     form = forms.AuthForm()
     if form.validate_on_submit():
-        flash('Access granted', 'success')
-        return render_template('index.html', home=True)
+        if getenv('PRIVATE_PASS') == form.password.data:  # temporary check
+            flash('Access granted', 'success')
+            return render_template('index.html', home=True)
+        else:
+            flash('Incorrect password', 'danger')
     if settings.private_app:
         return render_template(
             'auth.html',
