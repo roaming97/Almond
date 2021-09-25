@@ -11,7 +11,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+from app import settings
 from app.tasks import create_db
-create_db()
+if settings.auto_db:
+    create_db()
 
 from app import routes

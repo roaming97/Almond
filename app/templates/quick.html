@@ -12,10 +12,10 @@
                 </div>
                 {% else %} {{ form.url(class="form-control") }} {% endif %}
             </div>
+            <div class="form-btn">
+                {{ form.submit(class="btn btn-outline-success") }}
+            </div>
         </fieldset>
-        <div class="form-btn">
-            {{ form.submit(class="btn btn-outline-success") }}
-        </div>
     </form>
 </div>
 {% endblock %}

@@ -1,0 +1,21 @@
+{% extends "template.html" %} {% block content %}
+<div class="form-container">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Get access</legend>
+            <div class="form-field">
+                {{ form.password.label(class="form-control-label") }} {% if form.password.errors %} {{ form.password(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for e in form.password.errors %}
+                    <span>{{ e }}</span> {% endfor %}
+                </div>
+                {% else %} {{ form.password(class="form-control") }} {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-btn">
+            {{ form.submit(class="btn btn-info") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
