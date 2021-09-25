@@ -5,8 +5,7 @@ from app import models
 
 
 def create_db():
-    if not (exists(getenv("DATABASE_URI"))):
-        db.create_all()
+    db.create_all()
 
 
 def register_data(**kwargs):

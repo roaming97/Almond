@@ -1,21 +1,26 @@
-from flask import render_template, url_for, flash, redirect
-from app import app, forms, settings
 from os import getenv
+
+from flask import render_template, url_for, flash, redirect
+
+from app import app, bcrypt
+from app.forms import AuthForm, QuickAddForm
+from app.settings import private_app
 
 
 # Routes
 
-
 @app.route("/", methods=['GET', 'POST'])
+@app.route("/index", methods=['GET', 'POST'])
 def index():
-    form = forms.AuthForm()
+    form = AuthForm()
     if form.validate_on_submit():
-        if getenv('PRIVATE_PASS') == form.password.data:  # temporary check
+        hashed_pass = bcrypt.generate_password_hash(form.password.data)
+        if bcrypt.check_password_hash(hashed_pass, getenv('PRIVATE_PASS')):
             flash('Access granted', 'success')
             return render_template('index.html', home=True)
         else:
             flash('Incorrect password', 'danger')
-    if settings.private_app:
+    if private_app:
         return render_template(
             'auth.html',
             home=True,
@@ -29,7 +34,7 @@ def index():
 
 @app.route("/quick", methods=['GET', 'POST'])
 def quick():
-    form = forms.QuickAddForm()
+    form = QuickAddForm()
     if form.validate_on_submit():
         flash('Video submitted successfully', 'success')
         return redirect(url_for('index'))
