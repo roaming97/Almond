@@ -1,5 +1,3 @@
-import os
-
 from flask import render_template, url_for, flash, redirect
 from app import app, forms, settings
 from os import getenv
