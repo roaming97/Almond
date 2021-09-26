@@ -46,7 +46,7 @@ hr {
     width: auto;
     font-size: 0.75rem;
     margin: 0.25rem;
-    text-align: left;
+    text-align: center;
 }
 
 .form-field {
@@ -160,6 +160,9 @@ hr {
         line-height: 0.4em;
         font-size: 1rem;
     }
+    .invalid-feedback {
+        text-align: left;
+    }
     .form-container,
     .alert {
         width: 85%;
@@ -179,7 +182,7 @@ hr {
         margin-right: 1rem;
     }
     .form-control {
-        width: 75%;
+        width: 70%;
     }
     .form-btn {
         margin: 0.75rem;

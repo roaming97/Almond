@@ -1,2 +1,2 @@
-private_app = True
+private_app = False
 auto_db = True
