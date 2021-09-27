@@ -11,17 +11,16 @@ from app.settings import private_app
 
 
 @app.route("/", methods=['GET', 'POST'])
-@app.route("/index", methods=['GET', 'POST'])
 def index():
     if private_app and "access" not in session:
         return redirect(url_for('auth'))
     else:
-        return render_template('index.html', home=True)
+        return render_template('index.html', home=True, private=private_app)
 
 
 @app.route("/auth", methods=['GET', 'POST'])
 def auth():
-    if "access" in session or not private_app:
+    if not private_app or "access" in session:
         return redirect(url_for('index'))
     else:
         form = AuthForm()
@@ -40,6 +39,16 @@ def auth():
                 subtitle='Log into a private database.',
                 form=form
             )
+
+
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    if private_app:
+        session.pop("access", None)
+        flash('Logged out', 'info')
+        return redirect(url_for('auth'))
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route("/quick", methods=['GET', 'POST'])

@@ -1,6 +1,9 @@
 {% extends "template.html" %} {% block content %}
 <div class="buttons">
     <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">&plus;&nbsp;Quick Add</a>
+    {% if private %}
+        <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a>
+    {% endif %}
 </div>
 {% if data %} {% for video in data %}
 <div class="video">
