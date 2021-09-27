@@ -1,9 +1,11 @@
 from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+
 from app import forms
 
 app = Flask(__name__, template_folder='templates')

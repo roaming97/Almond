@@ -1,5 +1,5 @@
 # Almond
-Flask video database for archival purposes.
+Video database app made with Python using Flask.
 
 ---
 

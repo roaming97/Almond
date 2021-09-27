@@ -1,5 +1,6 @@
 from os import getenv
 from os.path import exists
+
 from app import db
 from app import models
 
