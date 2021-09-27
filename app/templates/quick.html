@@ -10,17 +10,18 @@
                     {% for e in form.url.errors %}
                     <span>{{ e }}</span> {% endfor %}
                 </div>
-                {% else %} {{ form.url(class="form-control") }}
-                <div class="d-none lds-ring">
+                {% else %} {{ form.url(class="form-control") }} {% endif %} {% if processing %}
+                <div class="lds-ring">
                     <div></div>
                     <div></div>
                     <div></div>
                     <div></div>
                 </div>
-                {% endif %}
+                {% else %}
                 <div class="form-btn">
                     {{ form.submit(class="btn btn-outline-success") }}
                 </div>
+                {% endif %}
             </div>
         </fieldset>
     </form>
