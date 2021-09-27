@@ -1,11 +1,10 @@
 from os import getenv
 from os.path import exists
 
-from flask import redirect, url_for, flash
+from flask import flash
 from youtube_dl import YoutubeDL
 
-from app import db
-from app import models
+from app import db, models
 
 
 def create_db():
@@ -29,15 +28,13 @@ def register_data(**kwargs):
     )
     db.session.add(data)
     db.session.commit()
-    flash('Video submitted successfully', 'success')
-    return redirect(url_for('index'))
 
 
-def get_video(url: str):
+def get_video_info(url: str):
     with YoutubeDL({}) as ydl:
-        info = ydl.extract_info(url)
+        info = ydl.extract_info(url, download=False)
 
-        url = info.get('webpage_url', None)
+        video_url = f'https://www.youtube.com/watch?v={info.get("id", None)}'
         title = info.get('title', None)
         author = info.get('uploader', None)
         description = info.get('description', None)
@@ -45,12 +42,12 @@ def get_video(url: str):
         date = info.get('upload_date', None)
         likes = info.get('like_count', None)
         dislikes = info.get('dislike_count', None)
-        subscribers = info.get('', None)  # Unknown location for subscribers data
+        subscribers = info.get('subscribers', None)  # Unknown location for subscribers data
         thumbnail = info.get('thumbnail', None)
-        profile_picture = info.get('', None)  # Insert profile picture scrap here
+        profile_picture = info.get('profile_picture', None)  # Insert profile picture scrap here
 
         data_dict = {
-            "url": url,
+            "url": video_url,
             "title": title,
             "author": author,
             "description": description,
@@ -65,7 +62,7 @@ def get_video(url: str):
 
         try:
             register_data(**data_dict)
+            return True
         except Exception as e:
-            print(e)
-            return str(e)
-
+            flash(f'Error: {str(e)}', 'danger')
+            return False
