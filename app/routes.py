@@ -67,9 +67,9 @@ def quick():
                 processing=True
             )
         return render_template(
-                'quick.html',
-                title="Quick Add",
-                subtitle="Quickly add a video to the database.",
-                form=form,
-                processing=False
-            )
+            'quick.html',
+            title="Quick Add",
+            subtitle="Quickly add a video to the database.",
+            form=form,
+            processing=False
+        )

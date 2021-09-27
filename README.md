@@ -12,7 +12,7 @@ Create an environment variables (`.env`) file.
 ```python
 PORT=5000
 SECRET='246795da7515a315db4988f48477cf4c'
-PRIVATE_PASS='private_almond_password'
+PRIVATE_PASS='almond123'
 DATABASE_URI='sqlite:///database.db'
 ```
 

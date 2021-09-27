@@ -16,3 +16,4 @@ six==1.16.0
 SQLAlchemy==1.4.25
 Werkzeug==2.0.1
 WTForms==2.3.3
+youtube-dl==2021.6.6
