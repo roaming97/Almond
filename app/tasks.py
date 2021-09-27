@@ -66,5 +66,6 @@ def get_video(url: str):
         try:
             register_data(**data_dict)
         except Exception as e:
+            print(e)
             return str(e)
 
