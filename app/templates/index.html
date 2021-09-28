@@ -16,13 +16,15 @@
             {% endif %}
         </a></h3>
         <p><span class="deco">By</span> {{video.author}}</p>
-        <p><span class="deco">"</span>
-            {% if video.description|length>120 %}
-            {{video.description[:120]}}...
-            {% else %}
-            {{video.description}}
-            {% endif %}
+        {% if video.description %}
+            <p><span class="deco">"</span>
+                {% if video.description|length>120 %}
+                {{video.description[:120]}}...
+                {% else %}
+                {{video.description}}
+                {% endif %}
             <span class="deco">"</span></p>
+        {% endif %}
         <p><span class="deco">Original upload date:</span>
             {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
         </p>

@@ -43,7 +43,7 @@ def get_video_info(url: str):
         likes = info.get('like_count', None)
         dislikes = info.get('dislike_count', None)
         subscribers = info.get('subscribers', None)  # Unknown location for subscribers data
-        thumbnail = info.get('thumbnail', None)
+        thumbnails = info.get('thumbnails', None)
         profile_picture = info.get('profile_picture', None)  # Insert profile picture scrap here
 
         data_dict = {
@@ -56,7 +56,7 @@ def get_video_info(url: str):
             'likes': likes,
             'dislikes': dislikes,
             'subscribers': subscribers,
-            'thumbnail': thumbnail,
+            'thumbnail': thumbnails[0]['url'],
             'profile_picture': profile_picture
         }
 

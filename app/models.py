@@ -5,7 +5,7 @@ from app import db
 
 class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(100), nullable=False)
+    url = db.Column(db.String(100), unique=True, nullable=False)
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(60), nullable=False)
     description = db.Column(db.Text, nullable=True, default='')
