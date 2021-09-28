@@ -7,9 +7,21 @@
 </div>
 {% if data %} {% for video in data %}
 <div class="video">
-    <h3> <a href={{video.url}}>{{video.title}}</a></h3>
+    <h3> <a href={{video.url}} target="_blank">
+        {% if video.title|length>75 %}
+            {{video.title[:75]}}...
+        {% else %}
+            {{video.title}}
+        {% endif %}
+    </a></h3>
     <p><span class="deco">By</span> {{video.author}}</p>
-    <p><span class="deco">"</span>{{video.description}}<span class="deco">"</span></p>
+    <p><span class="deco">"</span>
+        {% if video.description|length>120 %}
+            {{video.description[:120]}}...
+        {% else %}
+            {{video.description}}
+        {% endif %}
+        <span class="deco">"</span></p>
     <p><span class="deco">Original date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}</p>
 </div>
 {% endfor %} {% else %}
