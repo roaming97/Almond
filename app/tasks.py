@@ -17,12 +17,13 @@ def register_data(**kwargs):
         url=kwargs.get('url', '#'),
         title=kwargs.get('title', '(Untitled)'),
         author=kwargs.get('author', '(Unknown)'),
+        author_url=kwargs.get('author_url', ''),
         description=kwargs.get('description', ''),
         views=kwargs['views'],
         date=kwargs['date'],
-        likes=kwargs.get('likes', '?'),
-        dislikes=kwargs.get('dislikes', '?'),
-        subscribers=kwargs.get('subscribers', '?'),
+        likes=kwargs.get('likes', 'N/A'),
+        dislikes=kwargs.get('dislikes', 'N/A'),
+        subscribers=kwargs.get('subscribers', 'N/A'),
         thumbnail=kwargs.get('thumbnail', 'thumb.jpg'),
         profile_picture=kwargs.get('profile_picture', 'profile.jpg')
     )
@@ -37,12 +38,13 @@ def get_video_info(url: str):
         video_url = info.get('webpage_url', None)
         title = info.get('title', None)
         author = info.get('uploader', None)
+        author_url = info.get('uploader_url', None)
         description = info.get('description', None)
         views = info.get('view_count', None)
         date = info.get('upload_date', None)
-        likes = info.get('like_count', None)
-        dislikes = info.get('dislike_count', None)
-        subscribers = info.get('subscribers', None)  # Unknown location for subscribers data
+        likes = info.get('like_count', 'N/A')
+        dislikes = info.get('dislike_count', 'N/A')
+        subscribers = info.get('subscribers', 'N/A')  # Unknown location for subscribers data
         thumbnails = info.get('thumbnails', None)
         profile_picture = info.get('profile_picture', None)  # Insert profile picture scrap here
 
@@ -50,6 +52,7 @@ def get_video_info(url: str):
             "url": video_url,
             "title": title,
             "author": author,
+            "author_url": author_url,
             "description": description,
             "views": views,
             "date": date,

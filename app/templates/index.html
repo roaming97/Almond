@@ -15,7 +15,7 @@
             {{video.title}}
             {% endif %}
         </a></h3>
-        <p><span class="deco">By</span> {{video.author}}</p>
+        <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
         {% if video.description %}
             <p><span class="deco">"</span>
                 {% if video.description|length>120 %}

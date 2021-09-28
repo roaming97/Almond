@@ -8,6 +8,7 @@ class Video(db.Model):
     url = db.Column(db.String(100), unique=True, nullable=False)
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(60), nullable=False)
+    author_url = db.Column(db.String(60), nullable=True)
     description = db.Column(db.Text, nullable=True, default='')
     views = db.Column(db.String(25), nullable=False)
     date = db.Column(db.String(8), nullable=False)
@@ -23,6 +24,7 @@ class Video(db.Model):
                f"'{self.url}'" \
                f"'{self.title}', " \
                f"'{self.author}', " \
+               f"'{self.author_url}', " \
                f"'{self.description}'," \
                f"'{self.views}', " \
                f"'{self.date}', " \
