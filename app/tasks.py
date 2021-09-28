@@ -34,7 +34,7 @@ def get_video_info(url: str):
     with YoutubeDL({}) as ydl:
         info = ydl.extract_info(url, download=False)
 
-        video_url = f'https://www.youtube.com/watch?v={info.get("id", None)}'
+        video_url = info.get('webpage_url', None)
         title = info.get('title', None)
         author = info.get('uploader', None)
         description = info.get('description', None)

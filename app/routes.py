@@ -4,6 +4,7 @@ from flask import render_template, url_for, flash, redirect, session
 
 from app import app, bcrypt, tasks
 from app.forms import AuthForm, QuickAddForm
+from app.models import Video
 from app.settings import private_app
 
 
@@ -15,7 +16,8 @@ def index():
     if private_app and "access" not in session:
         return redirect(url_for('auth'))
     else:
-        return render_template('index.html', home=True, private=private_app)
+        data = Video.query.all()
+        return render_template('index.html', home=True, private=private_app, data=data)
 
 
 @app.route("/auth", methods=['GET', 'POST'])

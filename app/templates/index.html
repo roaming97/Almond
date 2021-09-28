@@ -10,7 +10,7 @@
     <h3> <a href={{video.url}}>{{video.title}}</a></h3>
     <p><span class="deco">By</span> {{video.author}}</p>
     <p><span class="deco">"</span>{{video.description}}<span class="deco">"</span></p>
-    <p><span class="deco">Original date:</span> {{video.date}}</p>
+    <p><span class="deco">Original date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}</p>
 </div>
 {% endfor %} {% else %}
 <h3 class="deco">(No videos yet)</h3>
