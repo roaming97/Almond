@@ -2,27 +2,39 @@
 <div class="buttons">
     <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">&plus;&nbsp;Quick Add</a>
     {% if private %}
-        <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a>
+    <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a>
     {% endif %}
 </div>
 {% if data %} {% for video in data %}
 <div class="video">
-    <h3> <a href={{video.url}} target="_blank">
-        {% if video.title|length>75 %}
+    <div class="video-data">
+            <h3><a href={{video.url}} target="_blank">
+            {% if video.title|length>75 %}
             {{video.title[:75]}}...
-        {% else %}
+            {% else %}
             {{video.title}}
-        {% endif %}
-    </a></h3>
-    <p><span class="deco">By</span> {{video.author}}</p>
-    <p><span class="deco">"</span>
-        {% if video.description|length>120 %}
+            {% endif %}
+        </a></h3>
+        <p><span class="deco">By</span> {{video.author}}</p>
+        <p><span class="deco">"</span>
+            {% if video.description|length>120 %}
             {{video.description[:120]}}...
-        {% else %}
+            {% else %}
             {{video.description}}
-        {% endif %}
-        <span class="deco">"</span></p>
-    <p><span class="deco">Original date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}</p>
+            {% endif %}
+            <span class="deco">"</span></p>
+        <p><span class="deco">Original upload date:</span>
+            {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
+        </p>
+        <p><span class="deco">Archived views:</span>&nbsp;{{video.views}}</p>
+        <div class="rating">
+            <p><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
+            <p><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
+        </div>
+    </div>
+    <div class="video-thumb">
+        <img src={{video.thumbnail}}/>
+    </div>
 </div>
 {% endfor %} {% else %}
 <h3 class="deco">(No videos yet)</h3>

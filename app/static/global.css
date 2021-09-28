@@ -10,7 +10,17 @@ body {
 }
 
 .deco {
-    color: var(--bs-gray-400);
+    color: var(--bs-gray-500);
+}
+
+.rating {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.rating p {
+    margin: 0.25rem;
 }
 
 .buttons {
@@ -141,6 +151,18 @@ hr {
     font-size: 0.75rem;
 }
 
+.video img {
+    width: 200px;
+    height: auto;
+}
+
+.video-thumb {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem;
+    align-items: center;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -154,14 +176,24 @@ hr {
     .content {
         max-width: 1000px;
     }
+    .video-data {
+        width: 75%;
+    }
+    .video-thumb {
+        width: 25%;
+        margin: auto;
+    }
     .video {
+        flex-direction: row;
         align-items: initial;
         padding: 1.5rem;
         text-align: left;
     }
     .video p {
-        line-height: 0.4em;
         font-size: 1rem;
+    }
+    .rating {
+        justify-content: inherit;
     }
     .buttons {
         width: 85%;
