@@ -39,7 +39,8 @@ def register_data(**kwargs):
 def save_blobs(with_video=True, **kwargs):
     blobs = []
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
-    video_path = f'{kwargs["vid_title"]}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
+    v_title = str(kwargs["vid_title"]).replace('"', "'").replace(':', ' -').replace("?", "")
+    video_path = f'{v_title}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
 
     thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
     with open(thumb_file[0], 'rb') as t:
@@ -55,8 +56,12 @@ def save_blobs(with_video=True, **kwargs):
 
 
 def get_video_info(url: str, with_blobs=True):
-    flash('Downloading...', 'warning')
-    with YoutubeDL({'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'}) as ydl:
+
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
+    }
+
+    with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url)
 
         video_id = info.get('id', None)
