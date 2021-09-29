@@ -221,6 +221,7 @@ hr {
     }
     .video-container video {
         width: auto;
+        max-width: 75vw;
     }
     .buttons {
         width: 85%;
