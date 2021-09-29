@@ -1,4 +1,6 @@
-from os import getenv
+import urllib.request as r
+from base64 import b64encode
+from os import getenv, remove
 from os.path import exists
 
 from flask import flash
@@ -14,9 +16,10 @@ def create_db():
 
 def register_data(**kwargs):
     data = models.Video(
-        url=kwargs.get('url', '#'),
-        title=kwargs.get('title', '(Untitled)'),
-        author=kwargs.get('author', '(Unknown)'),
+        video_id=kwargs["video_id"],
+        url=kwargs["url"],
+        title=kwargs.get('title', 'Untitled'),
+        author=kwargs.get('author', 'N/A'),
         author_url=kwargs.get('author_url', ''),
         description=kwargs.get('description', ''),
         views=kwargs['views'],
@@ -24,17 +27,34 @@ def register_data(**kwargs):
         likes=kwargs.get('likes', 'N/A'),
         dislikes=kwargs.get('dislikes', 'N/A'),
         subscribers=kwargs.get('subscribers', 'N/A'),
-        thumbnail=kwargs.get('thumbnail', 'thumb.jpg'),
+        thumbnail_url=kwargs.get('thumbnail_url', ''),
+        thumbnail=kwargs.get('thumbnail', b''),
         profile_picture=kwargs.get('profile_picture', 'profile.jpg')
     )
     db.session.add(data)
     db.session.commit()
 
 
-def get_video_info(url: str):
+def save_blobs(with_video=True, **kwargs):
+    blobs = []
+    thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
+    thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
+    with open(thumb_file[0], 'rb') as t:
+        blobs.append(t.read())
+        t.close()
+    if with_video:  # Placeholder video blob saving
+        with open(f'{kwargs["vid_title"]}-{kwargs["vid_id"]}.mp4', 'rb') as v:
+            blobs.append(v.read())
+            v.close()
+    remove(thumb_path)
+    return blobs
+
+
+def get_video_info(url: str, with_blobs=True):
     with YoutubeDL({}) as ydl:
         info = ydl.extract_info(url, download=False)
 
+        video_id = info.get('id', None)
         video_url = info.get('webpage_url', None)
         title = info.get('title', None)
         author = info.get('uploader', None)
@@ -45,10 +65,22 @@ def get_video_info(url: str):
         likes = info.get('like_count', 'N/A')
         dislikes = info.get('dislike_count', 'N/A')
         subscribers = info.get('subscribers', 'N/A')  # Unknown location for subscribers data
-        thumbnails = info.get('thumbnails', None)
+        thumbnail_url = info.get('thumbnails', None)[0]['url']
         profile_picture = info.get('profile_picture', None)  # Insert profile picture scrap here
 
+        if with_blobs:
+            blobs = save_blobs(
+                with_video=False,
+                thumb_url=thumbnail_url,
+                thumb_ext=(str(thumbnail_url).split(".")[-1]).split('?')[0],
+                vid_id=video_id
+            )
+            thumbnail = b64encode(blobs[0])
+        else:
+            thumbnail = b''
+
         data_dict = {
+            "video_id": video_id,
             "url": video_url,
             "title": title,
             "author": author,
@@ -59,7 +91,8 @@ def get_video_info(url: str):
             'likes': likes,
             'dislikes': dislikes,
             'subscribers': subscribers,
-            'thumbnail': thumbnails[0]['url'],
+            'thumbnail_url': thumbnail_url,
+            'thumbnail': thumbnail,
             'profile_picture': profile_picture
         }
 

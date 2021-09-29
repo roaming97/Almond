@@ -35,7 +35,7 @@
         </div>
     </div>
     <div class="video-thumb">
-        <img src={{video.thumbnail}}/>
+        <img src="data:;base64,{{video.thumbnail.decode('utf-8')}}"/>
     </div>
 </div>
 {% endfor %} {% else %}
