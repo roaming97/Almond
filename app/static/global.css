@@ -59,7 +59,7 @@ hr {
 .form-group p {
     font-size: 0.75rem;
     margin: 0.25rem;
-    color: var(--bs-red)
+    color: var(--bs-red);
 }
 
 .invalid-feedback {
