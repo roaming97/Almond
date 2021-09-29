@@ -45,6 +45,9 @@ def auth():
 
 @app.route("/watch/<int:video_id>")
 def watch(video_id):
+    if private_app and "access" not in session:
+        flash('Access denied', 'danger')
+        return redirect(url_for('auth'))
     current_video = Video.query.get_or_404(video_id)
     return render_template(
         'video.html',

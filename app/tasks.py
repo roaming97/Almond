@@ -55,6 +55,7 @@ def save_blobs(with_video=True, **kwargs):
 
 
 def get_video_info(url: str, with_blobs=True):
+    flash('Downloading...', 'warning')
     with YoutubeDL({'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'}) as ydl:
         info = ydl.extract_info(url)
 
