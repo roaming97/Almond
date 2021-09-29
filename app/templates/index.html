@@ -8,13 +8,16 @@
 {% if data %} {% for video in data %}
 <div class="video">
     <div class="video-data">
-            <h3><a href={{video.url}} target="_blank">
+        <h3><a href=watch/{{video.id}}>
             {% if video.title|length>75 %}
-            {{video.title[:75]}}...
+                {{video.title[:75]}}...
             {% else %}
-            {{video.title}}
+                {{video.title}}
             {% endif %}
         </a></h3>
+        {% if video.url %}
+            <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a>
+        {% endif %}
         <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
         {% if video.description %}
             <p><span class="deco">"</span>

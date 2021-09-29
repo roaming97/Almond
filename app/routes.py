@@ -43,14 +43,14 @@ def auth():
             )
 
 
-@app.route("/logout", methods=['GET', 'POST'])
-def logout():
-    if private_app:
-        session.pop("access", None)
-        flash('Logged out', 'info')
-        return redirect(url_for('auth'))
-    else:
-        return redirect(url_for('index'))
+@app.route("/watch/<int:video_id>")
+def watch(video_id):
+    current_video = Video.query.get_or_404(video_id)
+    return render_template(
+        'template.html',
+        title=current_video.title,
+        subtitle="Watch a video."
+    )
 
 
 @app.route("/quick", methods=['GET', 'POST'])
@@ -70,3 +70,13 @@ def quick():
             subtitle="Quickly add a video to the database.",
             form=form
         )
+
+
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    if private_app:
+        session.pop("access", None)
+        flash('Logged out', 'info')
+        return redirect(url_for('auth'))
+    else:
+        return redirect(url_for('index'))
