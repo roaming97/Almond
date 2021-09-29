@@ -27,7 +27,7 @@ def register_data(**kwargs):
         likes=kwargs.get('likes', 'N/A'),
         dislikes=kwargs.get('dislikes', 'N/A'),
         subscribers=kwargs.get('subscribers', 'N/A'),
-        thumbnail_url=kwargs.get('thumbnail_url', ''),
+        thumbnail_url=kwargs.get('thumbnail_url', None),
         thumbnail=kwargs.get('thumbnail', b''),
         profile_picture=kwargs.get('profile_picture', 'profile.jpg')
     )
@@ -65,7 +65,7 @@ def get_video_info(url: str, with_blobs=True):
         likes = info.get('like_count', 'N/A')
         dislikes = info.get('dislike_count', 'N/A')
         subscribers = info.get('subscribers', 'N/A')  # Unknown location for subscribers data
-        thumbnail_url = info.get('thumbnails', None)[0]['url']
+        thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
         profile_picture = info.get('profile_picture', None)  # Insert profile picture scrap here
 
         if with_blobs:

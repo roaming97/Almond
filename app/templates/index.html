@@ -35,7 +35,10 @@
         </div>
     </div>
     <div class="video-thumb">
-        <img src="data:;base64,{{video.thumbnail.decode('utf-8')}}"/>
+        <img src="data:image;base64,{{video.thumbnail.decode('utf-8')}}"/>
+        {% if video.thumbnail_url %}
+            <a href="{{video.thumbnail_url}}" target="_blank">Source</a>
+        {% endif %}
     </div>
 </div>
 {% endfor %} {% else %}

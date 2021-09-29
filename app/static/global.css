@@ -140,7 +140,7 @@ hr {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 75%;
+    width: 95%;
     box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
     padding: 0.5rem;
     margin: 2rem;
@@ -184,6 +184,7 @@ hr {
         margin: auto;
     }
     .video {
+        width: 75%;
         flex-direction: row;
         align-items: initial;
         padding: 1.5rem;
