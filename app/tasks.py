@@ -1,7 +1,7 @@
 import urllib.request as r
 from base64 import b64encode
 from os import getenv, remove
-from os.path import exists
+from os.path import exists, isfile
 
 from flask import flash
 from youtube_dl import YoutubeDL
@@ -27,6 +27,7 @@ def register_data(**kwargs):
         likes=kwargs.get('likes', 'N/A'),
         dislikes=kwargs.get('dislikes', 'N/A'),
         subscribers=kwargs.get('subscribers', 'N/A'),
+        stream=kwargs.get('stream', None),
         thumbnail_url=kwargs.get('thumbnail_url', None),
         thumbnail=kwargs.get('thumbnail', b''),
         profile_picture=kwargs.get('profile_picture', 'profile.jpg')
@@ -38,21 +39,24 @@ def register_data(**kwargs):
 def save_blobs(with_video=True, **kwargs):
     blobs = []
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
+    video_path = f'{kwargs["vid_title"]}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
+
     thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
     with open(thumb_file[0], 'rb') as t:
         blobs.append(t.read())
-        t.close()
-    if with_video:  # Placeholder video blob saving
-        with open(f'{kwargs["vid_title"]}-{kwargs["vid_id"]}.mp4', 'rb') as v:
+    if with_video:
+        with open(video_path, 'rb') as v:
             blobs.append(v.read())
-            v.close()
-    remove(thumb_path)
+    if isfile(thumb_path):
+        remove(thumb_path)
+    if isfile(video_path):
+        remove(video_path)
     return blobs
 
 
 def get_video_info(url: str, with_blobs=True):
     with YoutubeDL({}) as ydl:
-        info = ydl.extract_info(url, download=False)
+        info = ydl.extract_info(url)
 
         video_id = info.get('id', None)
         video_url = info.get('webpage_url', None)
@@ -70,14 +74,17 @@ def get_video_info(url: str, with_blobs=True):
 
         if with_blobs:
             blobs = save_blobs(
-                with_video=False,
                 thumb_url=thumbnail_url,
                 thumb_ext=(str(thumbnail_url).split(".")[-1]).split('?')[0],
-                vid_id=video_id
+                vid_id=video_id,
+                vid_title=title,
+                vid_ext=info["ext"]
             )
             thumbnail = b64encode(blobs[0])
+            stream = b64encode(blobs[1])
         else:
             thumbnail = b''
+            stream = b''
 
         data_dict = {
             "video_id": video_id,
@@ -91,6 +98,7 @@ def get_video_info(url: str, with_blobs=True):
             'likes': likes,
             'dislikes': dislikes,
             'subscribers': subscribers,
+            'stream': stream,
             'thumbnail_url': thumbnail_url,
             'thumbnail': thumbnail,
             'profile_picture': profile_picture
