@@ -3,7 +3,10 @@ Video database app made with Python using Flask.
 
 ---
 
-## Usage
+## Installation and use
+
+For this application you require at least [Python 3.8](https://www.python.org/downloads/) installed on your computer.
+
 Install the required dependencies.
 ```bash
 $ pip install -r requirements.txt
