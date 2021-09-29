@@ -47,9 +47,10 @@ def auth():
 def watch(video_id):
     current_video = Video.query.get_or_404(video_id)
     return render_template(
-        'template.html',
+        'video.html',
         title=current_video.title,
-        subtitle="Watch a video."
+        subtitle="Watch a video.",
+        video_data=current_video
     )
 
 

@@ -1,0 +1,27 @@
+{% extends "template.html" %} {% block content %}
+<div class="video-container">
+    <video controls>
+        <source src="data:;base64,{{video_data.stream.decode('utf-8')}}">
+    </video>
+</div>
+<div class="video-info">
+    <h2>{{video_data.title}}</h2>
+        {% if video_data.url %}
+                <a href={{video_data.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a>
+        {% endif %}
+    <p><span class="deco">By</span>&nbsp;<a href={{video_data.author_url}} target="_blank">{{video_data.author}}</a></p>
+    {% if video_data.description %}
+        <p><span class="deco">"</span>
+            {{video_data.description}}
+        <span class="deco">"</span></p>
+    {% endif %}
+    <p><span class="deco">Original upload date:</span>
+        {{video_data.date[4:6]}}-{{video_data.date[6:8]}}-{{video_data.date[0:4]}}
+    </p>
+    <p><span class="deco">Archived views:</span>&nbsp;{{video_data.views}}</p>
+    <div class="rating">
+        <p><i class="fas fa-thumbs-up"></i>&nbsp;{{video_data.likes}}</p>
+        <p><i class="fas fa-thumbs-down"></i>&nbsp;{{video_data.dislikes}}</p>
+    </div>
+</div>
+{% endblock %}
