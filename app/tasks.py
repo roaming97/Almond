@@ -60,7 +60,7 @@ def save_blobs(with_video=True, **kwargs):
     return blobs
 
 
-def get_video_info(url: str, with_blobs=True):
+def quick_add(url: str, with_blobs=True):
 
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
@@ -70,7 +70,10 @@ def get_video_info(url: str, with_blobs=True):
         try:
             info = ydl.extract_info(url)
         except DownloadError as e:
-            error = str(e).replace('[0;31mERROR:[0m', '').replace('\n', '. ')
+            error = str(e)\
+                .replace('[0;31mERROR:[0m', '')\
+                .replace('\n', '. ')\
+                .replace('ERROR:', '')
             flash(f'{error}', 'danger')
             return False
 

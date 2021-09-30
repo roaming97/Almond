@@ -72,7 +72,7 @@ hr {
 }
 
 .pagination span {
-    margin: auto;
+    margin-top: auto;
 }
 
 .invalid-feedback {
