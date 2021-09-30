@@ -71,7 +71,7 @@ def get_video_info(url: str, with_blobs=True):
             info = ydl.extract_info(url)
         except DownloadError as e:
             error = str(e).replace('[0;31mERROR:[0m', '').replace('\n', '. ')
-            flash(f'Error: {error}', 'danger')
+            flash(f'{error}', 'danger')
             return False
 
         video_id = info.get('id', None)
