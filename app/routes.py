@@ -22,7 +22,7 @@ def index():
             data = Video.query.order_by(Video.id.desc()).paginate(page=page, per_page=videos_per_page)
         elif sort_videos == "oldest":
             data = Video.query.paginate(page=page, per_page=videos_per_page)
-        if len(data) > videos_per_page:
+        if data.total > videos_per_page:
             return render_template('index.html', home=True, private=private_app, data=data, show_paginator=True)
         else:
             return render_template('index.html', home=True, private=private_app, data=data)
