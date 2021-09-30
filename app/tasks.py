@@ -5,6 +5,7 @@ from os.path import exists, isfile
 
 from flask import flash
 from youtube_dl import YoutubeDL
+from youtube_dl.utils import DownloadError
 
 from app import db, models
 
@@ -39,7 +40,11 @@ def register_data(**kwargs):
 def save_blobs(with_video=True, **kwargs):
     blobs = []
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
-    v_title = str(kwargs["vid_title"]).replace('"', "'").replace(':', ' -').replace("?", "")
+    v_title = str(kwargs["vid_title"])\
+        .replace('"', "'")\
+        .replace(':', ' -')\
+        .replace("?", "")\
+        .replace("/", "_")
     video_path = f'{v_title}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
 
     thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
@@ -62,7 +67,12 @@ def get_video_info(url: str, with_blobs=True):
     }
 
     with YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url)
+        try:
+            info = ydl.extract_info(url)
+        except DownloadError as e:
+            error = str(e).replace('[0;31mERROR:[0m', '').replace('\n', '. ')
+            flash(f'Error: {error}', 'danger')
+            return False
 
         video_id = info.get('id', None)
         video_url = info.get('webpage_url', None)
@@ -114,5 +124,5 @@ def get_video_info(url: str, with_blobs=True):
             register_data(**data_dict)
             return True
         except Exception as e:
-            flash(f'Error: {str(e)}', 'danger')
+            flash(f'Error: {e}', 'danger')
             return False

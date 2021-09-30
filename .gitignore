@@ -67,6 +67,16 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
+# youtube-dl
+*.mp4
+*.mp4.part
+*.m4a
+*.m4a.part
+*.mkv
+*.mkv.part
+*.part
+*.ydl
+
 # Scrapy stuff:
 .scrapy
 
