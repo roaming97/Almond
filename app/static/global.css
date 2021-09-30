@@ -62,6 +62,19 @@ hr {
     color: var(--bs-red);
 }
 
+.pagination {
+    display: flex;
+    flex-direction: row;
+}
+
+.pagination a {
+    margin: 0.25rem;
+}
+
+.pagination span {
+    margin: auto;
+}
+
 .invalid-feedback {
     width: auto;
     font-size: 0.75rem;

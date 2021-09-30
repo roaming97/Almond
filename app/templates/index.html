@@ -5,7 +5,22 @@
     <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a>
     {% endif %}
 </div>
-{% if data %} {% for video in data %}
+{% if show_paginator %}
+    <div class="pagination">
+        {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if n %}
+                {% if data.page == n %}
+                    <a class="btn btn-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                {% else %}
+                    <a class="btn btn-outline-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                {% endif %}
+            {% else %}
+                <span>&mldr;</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+{% if data %} {% for video in data.items %}
 <div class="video">
     <div class="video-data">
         <h3><a href=watch/{{video.id}}>
@@ -44,6 +59,22 @@
         {% endif %}
     </div>
 </div>
-{% endfor %} {% else %}
+{% endfor %}
+{% if show_paginator %}
+    <div class="pagination">
+        {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if n %}
+                {% if data.page == n %}
+                    <a class="btn btn-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                {% else %}
+                    <a class="btn btn-outline-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                {% endif %}
+            {% else %}
+                <span>&mldr;</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+{% else %}
 <h3 class="deco">(No videos yet)</h3>
 {% endif %} {% endblock %}

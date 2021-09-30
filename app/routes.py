@@ -1,11 +1,11 @@
 from os import getenv
 
-from flask import render_template, url_for, flash, redirect, session
+from flask import render_template, url_for, flash, redirect, session, request
 
 from app import app, bcrypt, tasks
 from app.forms import AuthForm, QuickAddForm
 from app.models import Video
-from app.settings import private_app
+from app.settings import private_app, videos_per_page, sort_videos
 
 
 # Routes
@@ -13,11 +13,19 @@ from app.settings import private_app
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
+    page = request.args.get('page', 1, type=int)
     if private_app and "access" not in session:
         return redirect(url_for('auth'))
     else:
-        data = Video.query.all()
-        return render_template('index.html', home=True, private=private_app, data=data)
+        data = None
+        if sort_videos == "newest":
+            data = Video.query.order_by(Video.id.desc()).paginate(page=page, per_page=videos_per_page)
+        elif sort_videos == "oldest":
+            data = Video.query.paginate(page=page, per_page=videos_per_page)
+        if len(data) > videos_per_page:
+            return render_template('index.html', home=True, private=private_app, data=data, show_paginator=True)
+        else:
+            return render_template('index.html', home=True, private=private_app, data=data)
 
 
 @app.route("/auth", methods=['GET', 'POST'])
