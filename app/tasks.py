@@ -1,9 +1,11 @@
+import re
 import urllib.request as r
 from base64 import b64encode
 from os import getenv, remove
 from os.path import exists, isfile
 
 from flask import flash
+from sqlalchemy.exc import IntegrityError
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 
@@ -69,10 +71,8 @@ def quick_add(url: str, with_blobs=True):
         try:
             info = ydl.extract_info(url)
         except DownloadError as e:
-            error = str(e) \
-                .replace('[0;31m[0m', '') \
-                .replace('\n', '. ') \
-                .replace('ERROR:', '')
+            ansi = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+            error = ansi.sub('', str(e)).replace('\n', '. ').replace('ERROR:', '')
             flash(f'{error}', 'danger')
             return False
 
@@ -125,6 +125,16 @@ def quick_add(url: str, with_blobs=True):
         try:
             register_data(**data_dict)
             return True
-        except Exception as e:
-            flash(f'Error: {e}', 'danger')
-            return False
+        except (IntegrityError, Exception) as e:
+            if type(e) == IntegrityError:
+                e.hide_parameters = True
+                e.code = None
+                s = str(e).split(":")[0]
+                if "UNIQUE" in s:
+                    flash('Video already exists in database.', 'danger')
+                else:
+                    flash(f'{s}', 'danger')
+                return False
+            else:
+                flash(f'{e}', 'danger')
+                return False
