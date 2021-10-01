@@ -40,10 +40,10 @@ def register_data(**kwargs):
 def save_blobs(with_video=True, **kwargs):
     blobs = []
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
-    v_title = str(kwargs["vid_title"])\
-        .replace('"', "'")\
-        .replace(':', ' -')\
-        .replace("?", "")\
+    v_title = str(kwargs["vid_title"]) \
+        .replace('"', "'") \
+        .replace(':', ' -') \
+        .replace("?", "") \
         .replace("/", "_")
     video_path = f'{v_title}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
 
@@ -61,7 +61,6 @@ def save_blobs(with_video=True, **kwargs):
 
 
 def quick_add(url: str, with_blobs=True):
-
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
     }
@@ -70,9 +69,9 @@ def quick_add(url: str, with_blobs=True):
         try:
             info = ydl.extract_info(url)
         except DownloadError as e:
-            error = str(e)\
-                .replace('[0;31mERROR:[0m', '')\
-                .replace('\n', '. ')\
+            error = str(e) \
+                .replace('[0;31m[0m', '') \
+                .replace('\n', '. ') \
                 .replace('ERROR:', '')
             flash(f'{error}', 'danger')
             return False

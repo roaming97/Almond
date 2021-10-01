@@ -11,6 +11,7 @@ from app.settings import private_app, videos_per_page
 def access_denied():
     return True if private_app and "access" not in session else False
 
+
 # Routes
 
 
@@ -30,14 +31,13 @@ def index():
         }
 
         if Video.query.count() == 0:
-            data = None
             return render_template('index.html', home=True, private=private_app)
         else:
             if sort:
-                data = Video.query.order_by(video_sorts.get(sort, Video.id))\
-                .paginate(page=page, per_page=videos_per_page)
+                data = Video.query.order_by(video_sorts.get(sort, Video.id)) \
+                    .paginate(page=page, per_page=videos_per_page)
             else:
-                data = Video.query.order_by(video_sorts.get(session["current_sort"], Video.id))\
+                data = Video.query.order_by(video_sorts.get(session["current_sort"], Video.id)) \
                     .paginate(page=page, per_page=videos_per_page)
 
             session["current_sort"] = sort
@@ -70,12 +70,12 @@ def auth():
             else:
                 flash('Incorrect password', 'danger')
         return render_template(
-                'auth.html',
-                home=True,
-                title='Private access',
-                subtitle='Log into a private database.',
-                form=form
-            )
+            'auth.html',
+            home=True,
+            title='Private access',
+            subtitle='Log into a private database.',
+            form=form
+        )
 
 
 @app.route("/watch/<int:video_id>")
