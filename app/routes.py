@@ -29,23 +29,28 @@ def index():
             'oldest': Video.date
         }
 
-        if sort:
-            data = Video.query.order_by(video_sorts.get(sort, Video.id)).paginate(page=page, per_page=videos_per_page)
+        if Video.query.count() == 0:
+            data = None
+            return render_template('index.html', home=True, private=private_app)
         else:
-            data = Video.query.order_by(video_sorts.get(session["current_sort"], Video.id))\
+            if sort:
+                data = Video.query.order_by(video_sorts.get(sort, Video.id))\
                 .paginate(page=page, per_page=videos_per_page)
+            else:
+                data = Video.query.order_by(video_sorts.get(session["current_sort"], Video.id))\
+                    .paginate(page=page, per_page=videos_per_page)
 
-        session["current_sort"] = sort
-        session["current_page"] = page
+            session["current_sort"] = sort
+            session["current_page"] = page
 
-        if data.total > videos_per_page:
-            return render_template('index.html', home=True,
-                                   private=private_app, data=data,
-                                   show_paginator=True, sorts=video_sorts, current_sort=session["current_sort"])
-        else:
-            return render_template('index.html', home=True,
-                                   private=private_app, data=data,
-                                   sorts=video_sorts, current_sort=session["current_sort"])
+            if data.total > videos_per_page:
+                return render_template('index.html', home=True,
+                                       private=private_app, data=data,
+                                       show_paginator=True, sorts=video_sorts, current_sort=session["current_sort"])
+            else:
+                return render_template('index.html', home=True,
+                                       private=private_app, data=data,
+                                       sorts=video_sorts, current_sort=session["current_sort"])
 
 
 @app.route("/auth", methods=['GET', 'POST'])
