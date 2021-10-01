@@ -21,4 +21,4 @@ from app.tasks import create_db
 if auto_db:
     create_db()
 
-from app import routes
+from app import errors, routes
