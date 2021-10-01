@@ -1,5 +1,6 @@
-from app import db
-
+from app import db, admin
+from flask import session, abort
+from flask_admin.contrib.sqla import ModelView
 
 # Database models
 
@@ -39,3 +40,13 @@ class Video(db.Model):
                f"'{self.thumbnail_url}'," \
                f"'{self.thumbnail}'," \
                f"'{self.profile_picture}')"
+
+
+# Admin
+
+class SecureModelView(ModelView):
+    def is_accessible(self):
+        return True if "admin" in session else abort(403)
+
+
+admin.add_view(SecureModelView(Video, db.session))

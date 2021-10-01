@@ -62,10 +62,12 @@ def auth():
         if form.validate_on_submit():
             hashed_pass = bcrypt.generate_password_hash(form.password.data)
             if bcrypt.check_password_hash(hashed_pass, getenv('PRIVATE_PASS')):
-                session["current_page"] = 1
-                session["current_sort"] = "newest_added"
-                session["access"] = True
+                tasks.init_session_vars()
                 flash('Access granted', 'success')
+                return redirect(url_for('index'))
+            elif bcrypt.check_password_hash(hashed_pass, getenv('SECRET')):
+                tasks.init_session_vars(admin=True)
+                flash('Admin access granted', 'success')
                 return redirect(url_for('index'))
             else:
                 flash('Incorrect password', 'danger')
@@ -116,6 +118,9 @@ def quick():
 def logout():
     if private_app:
         session.pop("access", None)
+        session.pop("current_page", None)
+        session.pop("current_sort", None)
+        session.pop("admin", None)
         flash('Logged out', 'info')
         return redirect(url_for('auth'))
     else:

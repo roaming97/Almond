@@ -5,6 +5,7 @@ load_dotenv()
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_admin import Admin
 
 from app import forms
 
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+admin = Admin(app)
 
 from app.settings import auto_db
 

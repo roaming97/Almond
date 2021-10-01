@@ -3,6 +3,7 @@ cffi==1.14.6
 click==8.0.1
 colorama==0.4.4
 Flask==2.0.1
+Flask-Admin==1.5.8
 Flask-Bcrypt==0.7.1
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1

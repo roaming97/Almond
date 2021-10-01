@@ -4,7 +4,7 @@ from base64 import b64encode
 from os import getenv, remove
 from os.path import exists, isfile
 
-from flask import flash
+from flask import flash, session
 from sqlalchemy.exc import IntegrityError
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
@@ -15,6 +15,14 @@ from app import db, models
 def create_db():
     if not exists(getenv('DATABASE_URI')):
         db.create_all()
+
+
+def init_session_vars(admin=False):
+    session["current_page"] = 1
+    session["current_sort"] = "newest_added"
+    session["access"] = True
+    if admin:
+        session["admin"] = True
 
 
 def register_data(**kwargs):
