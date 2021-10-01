@@ -26,7 +26,7 @@ def index():
             'newest-added': Video.id.desc(),
             'oldest-added': Video.id,
             'newest': Video.date.desc(),
-            'oldest': Video.date,
+            'oldest': Video.date
         }
 
         if sort:
