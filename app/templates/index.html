@@ -5,76 +5,101 @@
     <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a>
     {% endif %}
 </div>
-{% if show_paginator %}
-    <div class="pagination">
-        {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-            {% if n %}
-                {% if data.page == n %}
-                    <a class="btn btn-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+{% if data %}
+    <div class="dropdown">
+        <button class="btn btn-light btn-sm dropdown-toggle mt-1 px-4 border border-dark"
+                data-bs-toggle="dropdown">
+            Sort
+        </button>
+        <div class="dropdown-menu">
+            {% for key in sorts %}
+                {% if current_sort == key %}
+                    <a class="dropdown-item disabled" href="#">{{key.title().replace("-", " ")}}</a>
                 {% else %}
-                    <a class="btn btn-outline-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                    <a class="dropdown-item"
+                       href="{{url_for('index', page=session['current_page'], sort=key)}}">
+                        {{key.title().replace("-", " ")}}
+                    </a>
                 {% endif %}
-            {% else %}
-                <span>&mldr;</span>
-            {% endif %}
-        {% endfor %}
-    </div>
-{% endif %}
-{% if data %} {% for video in data.items %}
-<div class="video">
-    <div class="video-data">
-        <h3><a href=watch/{{video.id}}>
-            {% if video.title|length>75 %}
-                {{video.title[:75]}}...
-            {% else %}
-                {{video.title}}
-            {% endif %}
-        </a></h3>
-        {% if video.url %}
-            <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a>
-        {% endif %}
-        <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
-        {% if video.description %}
-            <p><span class="deco">"</span>
-                {% if video.description|length>120 %}
-                {{video.description[:120]}}...
-                {% else %}
-                {{video.description}}
-                {% endif %}
-            <span class="deco">"</span></p>
-        {% endif %}
-        <p><span class="deco">Original upload date:</span>
-            {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
-        </p>
-        <p><span class="deco">Archived views:</span>&nbsp;{{video.views}}</p>
-        <div class="rating">
-            <p><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
-            <p><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
+            {% endfor %}
         </div>
     </div>
-    <div class="video-thumb">
-        <img src="data:image;base64,{{video.thumbnail.decode('utf-8')}}"/>
-        {% if video.thumbnail_url %}
-            <a href="{{video.thumbnail_url}}" target="_blank">Thumbnail source</a>
-        {% endif %}
-    </div>
-</div>
-{% endfor %}
-{% if show_paginator %}
-    <div class="pagination">
-        {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-            {% if n %}
-                {% if data.page == n %}
-                    <a class="btn btn-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+    {% if show_paginator %}
+        <div class="pagination">
+            {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if n %}
+                    {% if data.page == n %}
+                        <a class="btn btn-dark disabled"
+                           href="{{url_for('index', page=n, sort=session['current_sort'])}}">
+                            {{n}}
+                        </a>
+                    {% else %}
+                        <a class="btn btn-outline-dark"
+                           href="{{url_for('index', page=n, sort=session['current_sort'])}}">
+                            {{n}}
+                        </a>
+                    {% endif %}
                 {% else %}
-                    <a class="btn btn-outline-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                    <span>&mldr;</span>
                 {% endif %}
-            {% else %}
-                <span>&mldr;</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% for video in data.items %}
+    <div class="video">
+        <div class="video-data">
+            <h3><a href=watch/{{video.id}}>
+                {% if video.title|length>75 %}
+                    {{video.title[:75]}}...
+                {% else %}
+                    {{video.title}}
+                {% endif %}
+            </a></h3>
+            {% if video.url %}
+                <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a>
             {% endif %}
-        {% endfor %}
+            <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
+            {% if video.description %}
+                <p><span class="deco">"</span>
+                    {% if video.description|length>120 %}
+                    {{video.description[:120]}}...
+                    {% else %}
+                    {{video.description}}
+                    {% endif %}
+                <span class="deco">"</span></p>
+            {% endif %}
+            <p><span class="deco">Original upload date:</span>
+                {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
+            </p>
+            <p><span class="deco">Archived views:</span>&nbsp;{{video.views}}</p>
+            <div class="rating">
+                <p><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
+                <p><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
+            </div>
+        </div>
+        <div class="video-thumb">
+            <img src="data:image;base64,{{video.thumbnail.decode('utf-8')}}"/>
+            {% if video.thumbnail_url %}
+                <a href="{{video.thumbnail_url}}" target="_blank">Thumbnail source</a>
+            {% endif %}
+        </div>
     </div>
-{% endif %}
+    {% endfor %}
+    {% if show_paginator %}
+        <div class="pagination">
+            {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                {% if n %}
+                    {% if data.page == n %}
+                        <a class="btn btn-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                    {% else %}
+                        <a class="btn btn-outline-dark" href="{{url_for('index', page=n)}}">{{n}}</a>
+                    {% endif %}
+                {% else %}
+                    <span>&mldr;</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% else %}
 <h3 class="deco">(No videos yet)</h3>
 {% endif %} {% endblock %}

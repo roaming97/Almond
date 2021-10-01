@@ -5,7 +5,7 @@ from flask import render_template, url_for, flash, redirect, session, request
 from app import app, bcrypt, tasks
 from app.forms import AuthForm, QuickAddForm
 from app.models import Video
-from app.settings import private_app, videos_per_page, sort_videos
+from app.settings import private_app, videos_per_page
 
 
 def access_denied():
@@ -17,24 +17,35 @@ def access_denied():
 @app.route("/", methods=['GET', 'POST'])
 def index():
     page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', "newest-added", type=str)
     if access_denied():
         return redirect(url_for('auth'))
     else:
-        data = None
 
-        if sort_videos == "newest-added":
-            data = Video.query.order_by(Video.id.desc()).paginate(page=page, per_page=videos_per_page)
-        elif sort_videos == "oldest-added":
-            data = Video.query.paginate(page=page, per_page=videos_per_page)
-        elif sort_videos == "newest":
-            data = Video.query.order_by(Video.date.desc()).paginate(page=page, per_page=videos_per_page)
-        elif sort_videos == "oldest":
-            data = Video.query.order_by(Video.date).paginate(page=page, per_page=videos_per_page)
+        video_sorts = {
+            'newest-added': Video.id.desc(),
+            'oldest-added': Video.id,
+            'newest': Video.date.desc(),
+            'oldest': Video.date,
+        }
+
+        if sort:
+            data = Video.query.order_by(video_sorts.get(sort, Video.id)).paginate(page=page, per_page=videos_per_page)
+        else:
+            data = Video.query.order_by(video_sorts.get(session["current_sort"], Video.id))\
+                .paginate(page=page, per_page=videos_per_page)
+
+        session["current_sort"] = sort
+        session["current_page"] = page
 
         if data.total > videos_per_page:
-            return render_template('index.html', home=True, private=private_app, data=data, show_paginator=True)
+            return render_template('index.html', home=True,
+                                   private=private_app, data=data,
+                                   show_paginator=True, sorts=video_sorts, current_sort=session["current_sort"])
         else:
-            return render_template('index.html', home=True, private=private_app, data=data)
+            return render_template('index.html', home=True,
+                                   private=private_app, data=data,
+                                   sorts=video_sorts, current_sort=session["current_sort"])
 
 
 @app.route("/auth", methods=['GET', 'POST'])
@@ -46,6 +57,8 @@ def auth():
         if form.validate_on_submit():
             hashed_pass = bcrypt.generate_password_hash(form.password.data)
             if bcrypt.check_password_hash(hashed_pass, getenv('PRIVATE_PASS')):
+                session["current_page"] = 1
+                session["current_sort"] = "newest_added"
                 session["access"] = True
                 flash('Access granted', 'success')
                 return redirect(url_for('index'))
