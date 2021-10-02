@@ -23,6 +23,13 @@ body {
     margin: 0.25rem;
 }
 
+.Avatar_Archive {
+    width: 40px !important;
+    position: relative !important;
+    left: 10px;
+    border-radius: 50%;
+}
+
 .buttons {
     width: 100%;
     display: flex;
@@ -154,7 +161,7 @@ hr {
 }
 
 .video-container .video-info {
-    width = 100%;
+    width: 100%;
     align-items: center;
 }
 

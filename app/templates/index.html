@@ -39,7 +39,7 @@
             </a></h3>
         {% if video.url %}
         <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
-        <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
+        <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a><img src="data:image;base64,{{video.profile_picture.decode('utf-8')}}" alt="Avatar" class="Avatar_Archive"></p>
         {% if video.description %}
         <p><span class="deco">"</span> {% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}
             <span class="deco">"</span></p>
@@ -47,6 +47,7 @@
         <p><span class="deco">Original upload date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
         </p>
         <p><span class="deco">Archived views:</span>&nbsp;{{video.views}}</p>
+        <p><span class="deco">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
         <div class="rating">
             <p><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
             <p><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
