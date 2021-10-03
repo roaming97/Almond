@@ -1,11 +1,11 @@
 {% extends "template.html" %} {% block content %}
-<div class="buttons">
+<div class="buttons d-flex m-2">
     <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">&plus;&nbsp;Quick Add</a> {% if private %}
     <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a> {% endif %}
 </div>
 {% if data %}
 <div class="dropdown">
-    <button class="btn btn-light btn-sm dropdown-toggle mt-1 px-4 border border-dark" data-bs-toggle="dropdown">
+    <button class="btn btn-light btn-sm dropdown-toggle my-1 px-4 border border-dark" data-bs-toggle="dropdown">
             Sort
         </button>
     <div class="dropdown-menu">
@@ -19,16 +19,16 @@
 {% if show_paginator %}
 <div class="pagination">
     {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-dark disabled" href="{{url_for('index', page=n, sort=session['current_sort'])}}">
+    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">
                             {{n}}
                         </a> {% else %}
-    <a class="btn btn-outline-dark" href="{{url_for('index', page=n, sort=session['current_sort'])}}">
+    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">
                             {{n}}
                         </a> {% endif %} {% else %}
-    <span>&mldr;</span> {% endif %} {% endfor %}
+    <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
 </div>
 {% endif %} {% for video in data.items %}
-<div class="video">
+<div class="video d-flex rounded-3 shadow-lg">
     <div class="video-data">
         <h3><a href=watch/{{video.id}}>
                 {% if video.title|length>75 %}
@@ -39,24 +39,23 @@
             </a></h3>
         {% if video.url %}
         <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
-        <div class="video-author">
-            <img src="data:image;base64,{{video.profile_picture.decode('utf-8')}}" class="pfp mx-2">
-            <p><span class="deco">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
+        <div class="video-author d-flex align-items-center my-2">
+            <img src="data:image;base64,{{video.profile_picture.decode('utf-8')}}" class="pfp mx-2 rounded-circle">
+            <p class="my-auto"><span class="text-black-50">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
         </div>
         {% if video.description %}
-        <p><span class="deco">"</span> {% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}
-            <span class="deco">"</span></p>
+        <p><span class="text-black-50">"</span>{% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}<span class="deco">"</span></p>
         {% endif %}
-        <p><span class="deco">Original upload date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
+        <p><span class="text-black-50">Original upload date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
         </p>
-        <p><span class="deco">Archived views:</span>&nbsp;{{video.views}}</p>
-        <p><span class="deco">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
-        <div class="rating">
-            <p><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
-            <p><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
+        <p><span class="text-black-50">Archived views:</span>&nbsp;{{video.views}}</p>
+        <p><span class="text-black-50">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
+        <div class="rating d-flex flex-row">
+            <p class="m-1"><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
+            <p class="m-1"><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
         </div>
     </div>
-    <div class="video-thumb">
+    <div class="video-thumb d-flex flex-column m-2 align-items-center my-auto">
         <img src="data:image;base64,{{video.thumbnail.decode('utf-8')}}" /> {% if video.thumbnail_url %}
         <a href="{{video.thumbnail_url}}" target="_blank">Thumbnail source</a> {% endif %}
     </div>
@@ -64,10 +63,10 @@
 {% endfor %} {% if show_paginator %}
 <div class="pagination">
     {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-dark" href="{{url_for('index', page=n)}}">{{n}}</a> {% else %}
-    <a class="btn btn-outline-dark" href="{{url_for('index', page=n)}}">{{n}}</a> {% endif %} {% else %}
-    <span>&mldr;</span> {% endif %} {% endfor %}
+    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n)}}">{{n}}</a> {% else %}
+    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n)}}">{{n}}</a> {% endif %} {% else %}
+    <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
 </div>
 {% endif %} {% else %}
-<h3 class="deco">(No videos yet)</h3>
+<h3 class="text-black-50">(No videos yet)</h3>
 {% endif %} {% endblock %}

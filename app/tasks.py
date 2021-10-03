@@ -26,6 +26,10 @@ def init_session_vars(admin=False):
         session["admin"] = True
 
 
+def f_digits(st: str):
+    return f'{int(st):,}'
+
+
 def register_data(**kwargs):
     data = models.Video(
         video_id=kwargs["video_id"],
@@ -46,6 +50,35 @@ def register_data(**kwargs):
     )
     db.session.add(data)
     db.session.commit()
+
+
+def additional_info(*args):
+    raw_html = httpx.get(args[0])
+    info = []
+    pfp = args[1]
+    subs = args[2]
+
+    pfp_regex = r'((avatar":{"thumbnails":\[{"url":")(https(.+?))(s48))'
+    subscribers_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"},"t)'
+    subscribers_regex_2 = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
+
+    for profile_picture_search in re.finditer(pfp_regex, str(raw_html.text)):
+        pfp = profile_picture_search.group(3) + "s1000-c-k-c0x00ffffff-no-rj"
+
+    for subscribers_count_search in re.finditer(subscribers_regex, str(raw_html.text)):
+        subs = subscribers_count_search.group(2)
+
+    for subscribers_count_search in re.finditer(subscribers_regex_2, str(raw_html.text)):
+        subs = subscribers_count_search.group(3)
+
+    if not subs:
+        subs = 'N/A'
+    else:
+        subs = subs.split(" ")[0]
+
+    info.append(pfp)
+    info.append(subs)
+    return info
 
 
 def save_blobs(with_video=True, **kwargs):
@@ -103,26 +136,17 @@ def quick_add(url: str, with_blobs=True):
         dislikes = info.get('dislike_count', 'N/A')
         thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
 
-        raw_html = httpx.get(author_url)
-        pfp_regex = r'((avatar":{"thumbnails":\[{"url":")(https(.+?))(s48))'
-        subscribers_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},' \
-                            r'(.+?)"},"t) '
-        subscribers_regex_2 = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{' \
-                              r'"accessibilityData":{"label":"(.+?)"}},(.+?)"}) '
+        views = f_digits(views)
+        likes = f_digits(likes)
+        dislikes = f_digits(dislikes)
 
+        profile_picture = None
         subscribers = None
 
-        for profile_picture_search in re.finditer(pfp_regex, str(raw_html.text)):
-            profile_picture = profile_picture_search.group(3) + "s1000-c-k-c0x00ffffff-no-rj"
+        a_info = additional_info(author_url, profile_picture, subscribers)
 
-        for subscribers_count_search in re.finditer(subscribers_regex, str(raw_html.text)):
-            subscribers = subscribers_count_search.group(2)
-
-        for subscribers_count_search in re.finditer(subscribers_regex_2, str(raw_html.text)):
-            subscribers = subscribers_count_search.group(3)
-
-        if not subscribers:
-            subscribers = 'N/A'
+        profile_picture = a_info[0]
+        subscribers = a_info[1]
 
         if with_blobs:
             blobs = save_blobs(

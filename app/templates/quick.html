@@ -1,21 +1,21 @@
 {% extends "template.html" %} {% block content %}
-<div class="form-container">
+<div class="form-container shadow-lg p-2 m-4 rounded-3">
     <form action="" method="post">
         {{ form.hidden_tag() }}
-        <fieldset class="form-group">
+        <fieldset class="form-group d-flex">
             <legend class="border-bottom mb-4">Quick add</legend>
-            <div class="form-field">
+            <div class="form-field d-flex align-items-center justify-content-center">
                 {{ form.url.label(class="form-control-label") }} {% if form.url.errors %} {{ form.url(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
+                <div class="invalid-feedback m-1 w-auto">
                     {% for e in form.url.errors %}
                     <span>{{ e }}</span> {% endfor %}
                 </div>
                 {% else %} {{ form.url(class="form-control") }} {% endif %}
-                <div class="form-btn">
+                <div class="form-btn align-items-start">
                     {{ form.submit(class="btn btn-outline-success") }}
                 </div>
             </div>
-            <p>Please note: downloads might take several minutes depending on your bandwidth speed.</p>
+            <p class="alert alert-warning fs-6 mx-auto my-2 w-100">Please note: downloads might take several minutes depending on your bandwidth speed.</p>
         </fieldset>
     </form>
 </div>
