@@ -85,11 +85,18 @@ def save_blobs(with_video=True, **kwargs):
     blobs = []
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
     pfp_path = f'{kwargs["vid_id"]}.{kwargs["pfp_ext"]}'
-    v_title = str(kwargs["vid_title"]) \
-        .replace('"', "'") \
-        .replace(':', ' -') \
-        .replace("?", "") \
-        .replace("/", "_")
+
+    filename_maps = {
+        '"': "'",
+        ':': ' -',
+        '?': '',
+        '/': '_',
+        '|': '_'
+    }
+
+    v_title = str(kwargs["vid_title"])
+    for key, value in filename_maps.items():
+        v_title = v_title.replace(key, value)
     video_path = f'{v_title}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
 
     thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)

@@ -1,6 +1,6 @@
 from os import getenv
 
-from flask import render_template, url_for, flash, redirect, session, request
+from flask import render_template, url_for, flash, redirect, session, request, abort
 
 from app import app, bcrypt, tasks
 from app.forms import AuthForm, QuickAddForm
@@ -103,7 +103,13 @@ def quick():
     else:
         form = QuickAddForm()
         if form.validate_on_submit():
-            if tasks.quick_add(form.url.data):
+            qa = None
+            try:
+                qa = tasks.quick_add(form.url.data)
+            except Exception as e:
+                print(f'{e}')
+                abort(500)
+            if qa:
                 flash('Video submitted successfully', 'success')
                 return redirect(url_for('index'))
         return render_template(
