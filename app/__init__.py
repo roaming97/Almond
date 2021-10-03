@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-admin = Admin(app)
+admin = Admin(app, template_mode='bootstrap4')
 
 from app.settings import auto_db
 

@@ -1,10 +1,10 @@
 import re
-import httpx
 import urllib.request as r
 from base64 import b64encode
 from os import getenv, remove
 from os.path import exists, isfile
 
+import httpx
 from flask import flash, session
 from sqlalchemy.exc import IntegrityError
 from youtube_dl import YoutubeDL
@@ -42,7 +42,7 @@ def register_data(**kwargs):
         stream=kwargs.get('stream', None),
         thumbnail_url=kwargs.get('thumbnail_url', None),
         thumbnail=kwargs.get('thumbnail', b''),
-        profile_picture=kwargs.get('profile_picture', 'profile.jpg')
+        profile_picture=kwargs.get('profile_picture', b'')
     )
     db.session.add(data)
     db.session.commit()
@@ -105,19 +105,24 @@ def quick_add(url: str, with_blobs=True):
 
         raw_html = httpx.get(author_url)
         pfp_regex = r'((avatar":{"thumbnails":\[{"url":")(https(.+?))(s48))'
-        subscribers_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"},"t)'
-        subscribers_regex_2 = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
-        profile_picture = "N/A"
-        subscribers = "N/A"
+        subscribers_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},' \
+                            r'(.+?)"},"t) '
+        subscribers_regex_2 = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{' \
+                              r'"accessibilityData":{"label":"(.+?)"}},(.+?)"}) '
+
+        subscribers = None
 
         for profile_picture_search in re.finditer(pfp_regex, str(raw_html.text)):
             profile_picture = profile_picture_search.group(3) + "s1000-c-k-c0x00ffffff-no-rj"
 
         for subscribers_count_search in re.finditer(subscribers_regex, str(raw_html.text)):
             subscribers = subscribers_count_search.group(2)
-            
+
         for subscribers_count_search in re.finditer(subscribers_regex_2, str(raw_html.text)):
             subscribers = subscribers_count_search.group(3)
+
+        if not subscribers:
+            subscribers = 'N/A'
 
         if with_blobs:
             blobs = save_blobs(
@@ -135,6 +140,7 @@ def quick_add(url: str, with_blobs=True):
         else:
             thumbnail = b''
             stream = b''
+            profile_picture = b''
 
         data_dict = {
             "video_id": video_id,

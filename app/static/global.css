@@ -23,13 +23,6 @@ body {
     margin: 0.25rem;
 }
 
-.Avatar_Archive {
-    width: 40px !important;
-    position: relative !important;
-    left: 10px;
-    border-radius: 50%;
-}
-
 .buttons {
     width: 100%;
     display: flex;
@@ -43,10 +36,6 @@ body {
     margin: 0.1rem;
 }
 
-hr {
-    width: 100%;
-}
-
 .form-container {
     box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25);
     padding: 0.5rem;
@@ -55,7 +44,11 @@ hr {
 }
 
 .form-container,
-.alert {
+.alert,
+.video-container video,
+.video-container .video-info,
+nav,
+hr {
     width: 100%;
 }
 
@@ -110,10 +103,6 @@ hr {
     align-items: flex-start;
 }
 
-.alert {
-    width: 100%;
-}
-
 .tohome:hover>h1,
 .tohome:active>h1,
 .tohome:visited>h1,
@@ -137,10 +126,29 @@ hr {
     font-size: 0.75rem;
 }
 
-.video img {
+.video-author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.5rem 0 0.5rem 0;
+}
+
+.video-author p {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.video-thumb img {
     width: 200px;
     height: auto;
 }
+
+.pfp {
+    width: 40px;
+    height: auto;
+    border-radius: 50%;
+}
+
 
 .video-thumb {
     display: flex;
@@ -156,12 +164,7 @@ hr {
     border-radius: 0.75em;
 }
 
-.video-container video {
-    width: 100%;
-}
-
 .video-container .video-info {
-    width: 100%;
     align-items: center;
 }
 
@@ -204,6 +207,9 @@ hr {
     }
     .video p {
         font-size: 1rem;
+    }
+    .video-author {
+        flex-direction: row;
     }
     .rating {
         justify-content: inherit;

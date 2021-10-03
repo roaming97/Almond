@@ -44,9 +44,12 @@ class Video(db.Model):
 
 # Admin
 
-class SecureModelView(ModelView):
+class AlmondModelView(ModelView):
+    page_size = 3
+    column_exclude_list = ['stream', 'thumbnail', 'profile_picture']
+
     def is_accessible(self):
         return True if "admin" in session else abort(403)
 
 
-admin.add_view(SecureModelView(Video, db.session))
+admin.add_view(AlmondModelView(Video, db.session))

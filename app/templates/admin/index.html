@@ -1,0 +1,10 @@
+{% extends 'admin/master.html' %}
+{% block head_css %}
+{{super()}}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+{% endblock %}
+{% block body %}
+<h1>Almond Admin</h1>
+<p>Manage submitted videos directly.</p>
+{% endblock %}
