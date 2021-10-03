@@ -137,7 +137,7 @@ hr {
         flex-direction: row
     }
     .rating {
-        justify-content: inherit
+        justify-content: initial
     }
     .video-container {
         margin: 1.5rem

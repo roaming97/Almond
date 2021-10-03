@@ -1,3 +1,3 @@
 private_app = True
 auto_db = True
-videos_per_page = 2
+videos_per_page = 5
