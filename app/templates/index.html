@@ -1,4 +1,4 @@
-{% extends "template.html" %} {% block content %}
+{% extends 'template.html' %} {% block content %}
 <div class="buttons d-flex m-2">
     <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">&plus;&nbsp;Quick Add</a> {% if private %}
     <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a> {% endif %}
@@ -17,16 +17,14 @@
     </div>
 </div>
 {% if show_paginator %}
-<div class="pagination">
-    {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">
-                            {{n}}
-                        </a> {% else %}
-    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">
-                            {{n}}
-                        </a> {% endif %} {% else %}
-    <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
-</div>
+    <div class="pagination">
+        {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
+        <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
+        {% else %}
+        <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
+        {% endif %} {% else %}
+        <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
+    </div>
 {% endif %} {% for video in data.items %}
 <div class="video d-flex rounded-3 shadow-lg">
     <div class="video-data">
@@ -61,12 +59,14 @@
     </div>
 </div>
 {% endfor %} {% if show_paginator %}
-<div class="pagination">
-    {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}})}}">{{n}}</a> {% else %}
-    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}})}}">{{n}}</a> {% endif %} {% else %}
-    <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
-</div>
+    <div class="pagination">
+        {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
+        <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
+        {% else %}
+        <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
+        {% endif %} {% else %}
+        <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
+    </div>
 {% endif %} {% else %}
 <h3 class="text-black-50">(No videos yet)</h3>
 {% endif %} {% endblock %}
