@@ -1,4 +1,5 @@
 from app import db, admin
+from app.settings import private_app
 from flask import session, abort
 from flask_admin.contrib.sqla import ModelView
 
@@ -47,9 +48,7 @@ class Video(db.Model):
 class AlmondModelView(ModelView):
     page_size = 3
     column_exclude_list = ['stream', 'thumbnail', 'profile_picture']
-
-    def is_accessible(self):
-        return True if "admin" in session else abort(403)
+    def is_accessible(self): return True if "admin" in session and private_app else abort(403)
 
 
 admin.add_view(AlmondModelView(Video, db.session))
