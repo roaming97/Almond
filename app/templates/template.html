@@ -17,7 +17,7 @@
         {% if home %}
         <h1>Almond</h1>
         {% else %}
-        <a href="{{ url_for('index') }}" class="tohome">
+        <a href="{{ url_for('index', sort=session['current_sort']) }}" class="tohome">
             <h1>Almond</h1>
         </a>
         {% endif %} {% if subtitle %}

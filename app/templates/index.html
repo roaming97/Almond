@@ -63,8 +63,8 @@
 {% endfor %} {% if show_paginator %}
 <div class="pagination">
     {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n)}}">{{n}}</a> {% else %}
-    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n)}}">{{n}}</a> {% endif %} {% else %}
+    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}})}}">{{n}}</a> {% else %}
+    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}})}}">{{n}}</a> {% endif %} {% else %}
     <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
 </div>
 {% endif %} {% else %}
