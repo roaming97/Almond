@@ -103,15 +103,14 @@ def quick():
     else:
         form = QuickAddForm()
         if form.validate_on_submit():
-            qa = None
             try:
-                qa = tasks.quick_add(form.url.data)
+                if tasks.quick_add(form.url.data):
+                    flash('Video submitted successfully', 'success')
+                    return redirect(url_for('index'))
             except Exception as e:
                 print(f'{e}')
                 abort(500)
-            if qa:
-                flash('Video submitted successfully', 'success')
-                return redirect(url_for('index'))
+
         return render_template(
             'quick.html',
             title="Quick Add",

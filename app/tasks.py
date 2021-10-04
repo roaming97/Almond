@@ -26,10 +26,6 @@ def init_session_vars(admin=False):
         session["admin"] = True
 
 
-def f_digits(st: str):
-    return f'{int(st):,}'
-
-
 def register_data(**kwargs):
     data = models.Video(
         video_id=kwargs["video_id"],
@@ -52,9 +48,21 @@ def register_data(**kwargs):
     db.session.commit()
 
 
+def f_digits(st: str): return f'{int(st):,}'
+def remove_temp_files(*args): [remove(a) for a in args if isfile(a)]
+
+
+def clean_filename(title):
+    filename_maps = {'"': "'", ':': ' -', '?': '', '*': '_', '/': '_', '\\': '_', '|': '_', '||': '_'}
+    new_title = str(title)
+    for key, value in filename_maps.items():
+        new_title = new_title.replace(key, value)
+    return new_title
+
+
 def additional_info(*args):
     raw_html = httpx.get(args[0])
-    info = []
+    a_info = []
     pfp = args[1]
     subs = args[2]
 
@@ -76,48 +84,31 @@ def additional_info(*args):
     else:
         subs = subs.split(" ")[0]
 
-    info.append(pfp)
-    info.append(subs)
-    return info
+    a_info.append(pfp)
+    a_info.append(subs)
+    return a_info
 
 
-def save_blobs(with_video=True, **kwargs):
+def save_blobs(**kwargs):
     blobs = []
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
     pfp_path = f'{kwargs["vid_id"]}.{kwargs["pfp_ext"]}'
 
-    filename_maps = {
-        '"': "'",
-        ':': ' -',
-        '?': '',
-        '/': '_',
-        '|': '_'
-    }
-
-    v_title = str(kwargs["vid_title"])
-    for key, value in filename_maps.items():
-        v_title = v_title.replace(key, value)
-    video_path = f'{v_title}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
+    video_path = f'{clean_filename(kwargs["vid_title"])}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
 
     thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
     pfp_file = r.urlretrieve(kwargs['pfp_url'], pfp_path)
     with open(thumb_file[0], 'rb') as t:
         blobs.append(t.read())
-    if with_video:
-        with open(video_path, 'rb') as v:
-            blobs.append(v.read())
+    with open(video_path, 'rb') as v:
+        blobs.append(v.read())
     with open(pfp_file[0], 'rb') as p:
         blobs.append(p.read())
-    if isfile(thumb_path):
-        remove(thumb_path)
-    if isfile(video_path):
-        remove(video_path)
-    if isfile(pfp_path):
-        remove(pfp_path)
+    remove_temp_files(thumb_path, pfp_path, video_path)
     return blobs
 
 
-def quick_add(url: str, with_blobs=True):
+def quick_add(url: str, archive_data=True):
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
     }
@@ -149,13 +140,9 @@ def quick_add(url: str, with_blobs=True):
 
         profile_picture = None
         subscribers = None
+        [profile_picture, subscribers] = additional_info(author_url, profile_picture, subscribers)
 
-        a_info = additional_info(author_url, profile_picture, subscribers)
-
-        profile_picture = a_info[0]
-        subscribers = a_info[1]
-
-        if with_blobs:
+        if archive_data:
             blobs = save_blobs(
                 thumb_url=thumbnail_url,
                 thumb_ext=(str(thumbnail_url).split(".")[-1]).split('?')[0],
@@ -163,7 +150,7 @@ def quick_add(url: str, with_blobs=True):
                 vid_title=title,
                 vid_ext=info["ext"],
                 pfp_url=profile_picture,
-                pfp_ext=".png"
+                pfp_ext="png"
             )
             thumbnail = b64encode(blobs[0])
             stream = b64encode(blobs[1])
@@ -200,10 +187,9 @@ def quick_add(url: str, with_blobs=True):
                 e.code = None
                 s = str(e).split(":")[0]
                 if "UNIQUE" in s:
-                    flash('Video already exists in database.', 'danger')
+                    flash('Video already exists in database', 'danger')
                 else:
                     flash(f'{s}', 'danger')
-                return False
             else:
                 flash(f'{e}', 'danger')
-                return False
+            return False
