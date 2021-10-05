@@ -50,6 +50,7 @@ def register_data(**kwargs):
 
 def f_digits(st: str): return f'{int(st):,}'
 def remove_temp_files(*args): [remove(a) for a in args if isfile(a)]
+def isfloat(s: str): return bool(re.match(r'^-?\d+(\.\d+)?$', s))
 
 
 def clean_filename(title):
@@ -82,7 +83,13 @@ def additional_info(*args):
     if not subs:
         subs = 'N/A'
     else:
-        subs = subs.split(" ")[0]
+        for word in subs.split(" "):
+            if word.isnumeric():
+                subs = word
+                break
+            elif isfloat(word):
+                subs = f'{word}M'
+                break
 
     a_info.append(pfp)
     a_info.append(subs)
