@@ -91,6 +91,11 @@ def additional_info(*args):
                 subs = f'{word}M'
                 break
 
+            if not word.isalnum():
+                raw_word = re.sub(r'(\d),(\d)', r'\1\2', word)
+                if raw_word.isnumeric():
+                    subs = word
+                    break
     a_info.append(pfp)
     a_info.append(subs)
     return a_info
