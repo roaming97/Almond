@@ -28,12 +28,12 @@ def index():
         query = request.args.get('q', '', type=str) if allow_search else None
         home = True
 
+        s = sort if sort else session["current_sort"]
+        data = Video.query.order_by(video_sorts.get(s, Video.id)).paginate(page=page, per_page=videos_per_page)
+
         if query:
             home = False
-            data = Video.query.filter(Video.title.contains(query)).paginate(page=1)
-        else:
-            s = sort if sort else session["current_sort"]
-            data = Video.query.order_by(video_sorts.get(s, Video.id)).paginate(page=page, per_page=videos_per_page)
+            data = Video.query.filter(Video.title.contains(query)).order_by(video_sorts.get(s, Video.id)).paginate(page=1)
 
         session["current_sort"] = sort
         session["current_page"] = page
