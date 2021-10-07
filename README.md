@@ -1,4 +1,7 @@
 # Almond
+
+![](./app/static/almond-96.png)
+
 Video database app made with Python using Flask.
 
 ---

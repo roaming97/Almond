@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"> {% if title %}
-    <title>Almond - {{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% if title %}
+        <title>Almond - {{title}}</title>
     {% else %}
-    <title>Almond</title>
+        <title>Almond</title>
     {% endif %}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
@@ -15,22 +16,35 @@
 <body>
     <div class="container d-flex flex-column align-items-center m-auto p-3 text-center">
         {% if home %}
-        <h1>Almond</h1>
-        {% else %}
-        <a href="{{ url_for('index', sort=session['current_sort']) }}" class="tohome">
             <h1>Almond</h1>
-        </a>
-        {% endif %} {% if subtitle %}
-        <p>{{subtitle}}</p>
         {% else %}
-        <p>Video database app.</p>
+            <a href="{{ url_for('index', sort=session['current_sort']) }}" class="tohome">
+                <h1>Almond</h1>
+            </a>
         {% endif %}
-        <hr/> {% with msgs = get_flashed_messages(with_categories=true) %} {% if msgs %} {% for category, message in msgs %}
-        <div class="alert alert-{{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %} {% endif %} {% endwith %} {% block content %} {% endblock %}
+
+        {% if subtitle %}
+            <p>{{subtitle}}</p>
+        {% else %}
+            <p>Video database app.</p>
+        {% endif %}
+        <hr/>
+        {% with msgs = get_flashed_messages(with_categories=true) %}
+            {% if msgs %}
+                {% for category, message in msgs %}
+                    <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
     </div>
 </body>
+{% if prevent %}
+    <script>if (window.history.replaceState) window.history.replaceState(null, null, window.location.href);</script>
+{% endif %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 </html>

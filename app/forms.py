@@ -8,6 +8,11 @@ class AuthForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
+class SearchForm(FlaskForm):
+    query = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+
 class QuickAddForm(FlaskForm):
     url = StringField('YouTube URL', validators=[
         DataRequired(),

@@ -1,9 +1,16 @@
 {% extends 'template.html' %} {% block content %}
 <div class="buttons d-flex m-2">
-    <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">&plus;&nbsp;Quick Add</a> {% if private %}
-    <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">&minus;&nbsp;Logout</a> {% endif %}
+    <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">
+        <i class="fas fa-plus-circle me-1"></i>Quick Add
+    </a>
+    {% if private %}
+        <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">
+            <i class="fas fa-sign-out-alt me-1"></i>Logout
+        </a>
+    {% endif %}
 </div>
 {% if data %}
+
 <div class="dropdown">
     <button class="btn btn-light btn-sm dropdown-toggle my-1 px-4 border border-dark" data-bs-toggle="dropdown">
             Sort
@@ -26,9 +33,33 @@
     <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
 {% endmacro %}
 
+{% if form %}
+<div class="form-container w-auto shadow p-2 m-3 rounded-3">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+       <fieldset class="form-group d-flex">
+            <div class="form-field search d-flex align-items-center">
+                {{ form.query.label(class="form-control-label") }}
+                {% if form.query.errors %} {{ form.query(class="form-control is-invalid") }}
+                <div class="invalid-feedback m-1 w-auto">
+                    {% for e in form.query.errors %}
+                        <span>{{ e }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ form.query(class="form-control") }} {% endif %}
+                <div class="form-btn align-items-start">
+                    {{ form.submit(class="btn btn-outline-secondary") }}
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endif %}
+
 {% if show_paginator %}
     <div class="pagination">{{ pag(data) }}</div>
 {% endif %}
+
 {% for video in data.items %}
 <div class="video d-flex rounded-3 shadow-lg">
     <div class="video-data">

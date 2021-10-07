@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
 
-from app import db, models
+from app import db, models, dictionaries
 
 
 def create_db():
@@ -54,9 +54,8 @@ def isfloat(s: str): return bool(re.match(r'^-?\d+(\.\d+)?$', s))
 
 
 def clean_filename(title):
-    filename_maps = {'"': "'", ':': ' -', '?': '', '*': '_', '/': '_', '\\': '_', '|': '_', '||': '_'}
     new_title = str(title)
-    for key, value in filename_maps.items():
+    for key, value in dictionaries.filename_maps.items():
         new_title = new_title.replace(key, value)
     return new_title
 
@@ -121,11 +120,7 @@ def save_blobs(**kwargs):
 
 
 def quick_add(url: str, archive_data=True):
-    ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
-    }
-
-    with YoutubeDL(ydl_opts) as ydl:
+    with YoutubeDL(dictionaries.ydl_opts) as ydl:
         try:
             info = ydl.extract_info(url)
         except DownloadError as e:

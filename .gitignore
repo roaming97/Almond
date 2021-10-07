@@ -21,7 +21,6 @@ sdist/
 var/
 wheels/
 share/python-wheels/
-venv/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -75,7 +74,7 @@ instance/
 *.mkv
 *.mkv.part
 *.part
-*.ydl
+*.ytdl
 
 # Scrapy stuff:
 .scrapy
@@ -120,6 +119,7 @@ celerybeat.pid
 .env
 .venv
 env/
+venv/
 ENV/
 env.bak/
 venv.bak/

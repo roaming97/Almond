@@ -3,9 +3,10 @@ from os import getenv
 from flask import render_template, url_for, flash, redirect, session, request, abort
 
 from app import app, bcrypt, tasks
-from app.forms import AuthForm, QuickAddForm
+from app.dictionaries import video_sorts
+from app.forms import AuthForm, QuickAddForm, SearchForm
 from app.models import Video
-from app.settings import private_app, videos_per_page
+from app.settings import private_app, videos_per_page, allow_search, prevent_resend
 
 
 def access_denied(): return True if private_app and "access" not in session else False
@@ -16,34 +17,40 @@ def access_denied(): return True if private_app and "access" not in session else
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    page = request.args.get('page', 1, type=int)
-    sort = request.args.get('sort', "newest-added", type=str)
     if access_denied():
         return redirect(url_for('auth'))
     else:
-        video_sorts = {
-            'newest-added': Video.id.desc(),
-            'oldest-added': Video.id,
-            'newest': Video.date.desc(),
-            'oldest': Video.date
-        }
-
         if Video.query.count() == 0:
-            return render_template('index.html', home=True, private=private_app)
+            return render_template('index.html', home=True, private=private_app, prevent=prevent_resend)
+
+        page = request.args.get('page', 1, type=int)
+        sort = request.args.get('sort', "newest-added", type=str)
+        query = request.args.get('q', '', type=str) if allow_search else None
+        home = True
+
+        if query:
+            home = False
+            data = Video.query.filter(Video.title.contains(query)).paginate(page=1)
         else:
             s = sort if sort else session["current_sort"]
             data = Video.query.order_by(video_sorts.get(s, Video.id)).paginate(page=page, per_page=videos_per_page)
 
-            session["current_sort"] = sort
-            session["current_page"] = page
+        session["current_sort"] = sort
+        session["current_page"] = page
 
-            def render_index(with_paginator=False):
-                return render_template('index.html', home=True,
-                                       private=private_app, data=data,
-                                       show_paginator=with_paginator, sorts=video_sorts,
-                                       current_sort=session["current_sort"])
+        form = SearchForm() if allow_search else None
+        if form.validate_on_submit():
+            return redirect(
+                url_for('index', page=session['current_page'], sort=session["current_sort"], q=form.query.data))
 
-            return render_index(with_paginator=True) if data.total > videos_per_page else render_index()
+        def render_index(with_paginator=False):
+            return render_template('index.html', home=home,
+                                   private=private_app, data=data,
+                                   show_paginator=with_paginator, form=form,
+                                   sorts=video_sorts, current_sort=session["current_sort"],
+                                   prevent=prevent_resend)
+
+        return render_index(with_paginator=True) if data.total > videos_per_page else render_index()
 
 
 @app.route("/auth", methods=['GET', 'POST'])
@@ -69,7 +76,7 @@ def auth():
             home=True,
             title='Private access',
             subtitle='Log into a private database.',
-            form=form
+            form=form, prevent=prevent_resend
         )
 
 

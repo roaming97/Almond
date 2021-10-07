@@ -10,7 +10,7 @@
                     {% for e in form.password.errors %}
                     <span>{{ e }}</span> {% endfor %}
                 </div>
-                {% else %} {{ form.password(class="form-control") }} {% endif %}
+                {% else %} {{ form.password(class="form-control", autofocus="autofocus") }} {% endif %}
                 <div class="form-btn align-items-start">
                     {{ form.submit(class="btn btn-primary") }}
                 </div>

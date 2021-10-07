@@ -11,6 +11,7 @@ from app import forms
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = getenv("SECRET")
+app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
