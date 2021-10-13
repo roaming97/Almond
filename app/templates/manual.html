@@ -1,0 +1,44 @@
+{% extends "template.html" %} {% block content %}
+<div class="form-container shadow-lg p-2 m-4 rounded-3">
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group d-flex">
+            <legend class="border-bottom mb-4">Manual add</legend>
+            {% for field in form if field.widget.input_type != 'hidden' %}
+            {% if field.type == 'SubmitField' %}
+            <div class="form-btn flex-row align-items-start">
+                {{ form.submit(class="btn btn-outline-success") }}
+            </div>
+            {% else %}
+            <div class="form-field d-flex flex-column align-items-start mb-3">
+                <div class="flex-row">
+                    {{ field.label(class="form-control-label m-0 mb-2") }}
+                    {% if field.flags.required %}<span class="text-danger">*</span>{% endif %}
+                </div>
+                {% if field.errors %}
+                {% if field.type == 'FileField' %}
+                {{ field(class="form-control-file") }}
+                {% for e in field.errors %}
+                <span class="text-danger">{{ e }}</span>
+                {% endfor %}
+                {% else %}
+                {{ field(class="form-control is-invalid") }}
+                <div class="invalid-feedback m-1 w-auto">
+                    {% for e in field.errors %}
+                    <span>{{ e }}</span> {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                {% if field.type == 'FileField' %}
+                {{ field(class="form-control-file") }}
+                {% else %}
+                {{ field(class="form-control w-100") }}
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

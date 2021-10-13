@@ -4,6 +4,8 @@ private_app = True
 auto_db = True
 # Allows users to search for videos (shows a search bar and lets users input a "q" query param)
 allow_search = True
+# Allows users to manually add a record with custom data
+manual_add = True
 # Prevents forms across the app from asking form resending confirmations and clears the form input instead.
 prevent_resend = True
 # Number of videos shown per page

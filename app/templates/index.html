@@ -3,6 +3,11 @@
     <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">
         <i class="fas fa-plus-circle me-1"></i>Quick Add
     </a>
+    {% if manual_add %}
+    <a href="{{ url_for('manual') }}" class="btn btn-warning" role="button">
+        <i class="fas fa-plus-circle me-1"></i>Manual Add
+    </a>
+    {% endif %}
     {% if private %}
         <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">
             <i class="fas fa-sign-out-alt me-1"></i>Logout

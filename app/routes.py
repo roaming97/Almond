@@ -2,14 +2,13 @@ from os import getenv
 
 from flask import render_template, url_for, flash, redirect, session, request, abort
 
-from app import app, bcrypt, tasks
+from app import app, bcrypt, tasks, settings
 from app.dictionaries import video_sorts
-from app.forms import AuthForm, QuickAddForm, SearchForm
+from app.forms import AuthForm, QuickAddForm, SearchForm, ManualAddForm
 from app.models import Video
-from app.settings import private_app, videos_per_page, allow_search, prevent_resend
 
 
-def access_denied(): return True if private_app and "access" not in session else False
+def access_denied(): return True if settings.private_app and "access" not in session else False
 
 
 # Routes
@@ -21,42 +20,49 @@ def index():
         return redirect(url_for('auth'))
     else:
         if Video.query.count() == 0:
-            return render_template('index.html', home=True, private=private_app, prevent=prevent_resend)
+            return render_template('index.html', home=True,
+                                   private=settings.private_app, prevent=settings.prevent_resend)
 
         page = request.args.get('page', 1, type=int)
         sort = request.args.get('sort', "newest-added", type=str)
-        query = request.args.get('q', '', type=str) if allow_search else None
+        query = request.args.get('q', '', type=str) if settings.allow_search else None
         home = True
 
         s = sort if sort else session["current_sort"]
-        data = Video.query.order_by(video_sorts.get(s, Video.id)).paginate(page=page, per_page=videos_per_page)
+        data = Video.query.order_by(video_sorts.get(s, Video.id)).paginate(page=page,
+                                                                           per_page=settings.videos_per_page)
 
         if query:
             home = False
-            data = Video.query.filter(Video.title.contains(query)).order_by(video_sorts.get(s, Video.id)).paginate(page=1)
+            data = Video.query.filter(Video.title.contains(query)).order_by(video_sorts.get(s, Video.id)).paginate(
+                page=1)
 
         session["current_sort"] = sort
         session["current_page"] = page
 
-        form = SearchForm() if allow_search else None
+        form = SearchForm() if settings.allow_search else None
         if form.validate_on_submit():
-            return redirect(
-                url_for('index', page=session['current_page'], sort=session["current_sort"], q=form.query.data))
+            return redirect(url_for(
+                'index',
+                page=session['current_page'],
+                sort=session["current_sort"],
+                q=form.query.data
+            ))
 
         def render_index(with_paginator=False):
             return render_template('index.html', home=home,
-                                   private=private_app, data=data,
+                                   private=settings.private_app, data=data,
                                    show_paginator=with_paginator, form=form,
                                    sorts=video_sorts, current_sort=session["current_sort"],
-                                   prevent=prevent_resend)
+                                   prevent=settings.prevent_resend, manual_add=settings.manual_add)
 
-        return render_index(with_paginator=True) if data.total > videos_per_page else render_index()
+        return render_index(with_paginator=True) if data.total > settings.videos_per_page else render_index()
 
 
 @app.route("/auth", methods=['GET', 'POST'])
 def auth():
-    if not private_app or "access" in session:
-        return redirect(url_for('index'))
+    if not settings.private_app or "access" in session:
+        return redirect(url_for('index', page=session["current_page"], sort=session["current_sort"]))
     else:
         form = AuthForm()
         if form.validate_on_submit():
@@ -76,7 +82,7 @@ def auth():
             home=True,
             title='Private access',
             subtitle='Log into a private database.',
-            form=form, prevent=prevent_resend
+            form=form, prevent=settings.prevent_resend
         )
 
 
@@ -119,9 +125,37 @@ def quick():
         )
 
 
+@app.route("/manual", methods=['GET', 'POST'])
+def manual():
+    if access_denied():
+        flash('Access denied', 'danger')
+        return redirect(url_for('auth'))
+    elif not settings.manual_add:
+        flash('Manual adding is not enabled in this server', 'danger')
+        return redirect(url_for('index', page=session["current_page"], sort=session["current_sort"]))
+    else:
+        form = ManualAddForm()
+        if form.validate_on_submit():
+            try:
+                if tasks.manual_add(form=form):
+                    flash('Video submitted successfully', 'success')
+                    return redirect(url_for('index'))
+            except Exception as e:
+                print(f'{e}')
+                flash(f'{e}', 'danger')
+                return abort(500)
+
+        return render_template(
+            'manual.html',
+            title="Manual Add",
+            subtitle="Manually add a record to the database.",
+            form=form, prevent=settings.prevent_resend
+        )
+
+
 @app.route("/logout", methods=['GET', 'POST'])
 def logout():
-    if private_app:
+    if settings.private_app:
         session.pop("access", None)
         session.pop("current_page", None)
         session.pop("current_sort", None)
@@ -129,4 +163,4 @@ def logout():
         flash('Logged out', 'info')
         return redirect(url_for('auth'))
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('index', page=session["current_page"], sort=session["current_sort"]))

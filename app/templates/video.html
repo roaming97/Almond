@@ -7,8 +7,13 @@
 <div class="video-info">
     <h2>{{video_data.title}}</h2>
     {% if video_data.url %}
-    <a href={{video_data.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
-    <p><span class="text-black-50">By</span>&nbsp;<a href={{video_data.author_url}} target="_blank">{{video_data.author}}</a></p>
+        <a href={{video_data.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
+        <div class="video-author d-flex align-items-center justify-content-center my-2">
+            <img src="data:image;base64,{{video_data.profile_picture.decode('utf-8')}}" class="pfp mx-2 rounded-circle">
+            <p class="my-auto"><span class="text-black-50">By</span>&nbsp;
+                <a href={{video_data.author_url}} target="_blank">{{video_data.author}}</a>
+            </p>
+        </div>
     {% if video_data.description %}
     <p><span class="text-black-50">"</span> {{video_data.description}}
         <span class="text-black-50">"</span></p>

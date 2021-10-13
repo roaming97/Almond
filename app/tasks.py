@@ -1,11 +1,14 @@
 import re
 import urllib.request as r
 from base64 import b64encode
+from io import BytesIO
 from os import getenv, remove
-from os.path import exists, isfile
+from os.path import exists, isfile, join, dirname, realpath
 
 import httpx
+from PIL import Image
 from flask import flash, session
+from flask_wtf import FlaskForm
 from sqlalchemy.exc import IntegrityError
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
@@ -27,25 +30,39 @@ def init_session_vars(admin=False):
 
 
 def register_data(**kwargs):
-    data = models.Video(
-        video_id=kwargs["video_id"],
-        url=kwargs["url"],
-        title=kwargs.get('title', 'Untitled'),
-        author=kwargs.get('author', 'N/A'),
-        author_url=kwargs.get('author_url', ''),
-        description=kwargs.get('description', ''),
-        views=kwargs['views'],
-        date=kwargs['date'],
-        likes=kwargs.get('likes', 'N/A'),
-        dislikes=kwargs.get('dislikes', 'N/A'),
-        subscribers=kwargs.get('subscribers', 'N/A'),
-        stream=kwargs.get('stream', None),
-        thumbnail_url=kwargs.get('thumbnail_url', None),
-        thumbnail=kwargs.get('thumbnail', b''),
-        profile_picture=kwargs.get('profile_picture', b'')
-    )
-    db.session.add(data)
-    db.session.commit()
+    try:
+        data = models.Video(
+            video_id=kwargs.get('video_id', ''),
+            url=kwargs.get('url', ''),
+            title=kwargs.get('title', 'Untitled'),
+            author=kwargs.get('author', 'N/A'),
+            author_url=kwargs.get('author_url', ''),
+            description=kwargs.get('description', ''),
+            views=kwargs.get('views', 'N/A'),
+            date=kwargs.get('date', 'N/A'),
+            likes=kwargs.get('likes', 'N/A'),
+            dislikes=kwargs.get('dislikes', 'N/A'),
+            subscribers=kwargs.get('subscribers', 'N/A'),
+            stream=kwargs['stream'],
+            thumbnail_url=kwargs.get('thumbnail_url', ''),
+            thumbnail=kwargs.get('thumbnail', b''),
+            profile_picture=kwargs.get('profile_picture', b'')
+        )
+        db.session.add(data)
+        db.session.commit()
+        return True
+    except (IntegrityError, Exception) as e:
+        if type(e) == IntegrityError:
+            e.hide_parameters = True
+            e.code = None
+            s = str(e).split(":")[0]
+            if "UNIQUE" in s:
+                flash('Video already exists in database', 'danger')
+            else:
+                flash(f'{s}', 'danger')
+        else:
+            flash(f'{e}', 'danger')
+        return False
 
 
 def f_digits(st: str): return f'{int(st):,}'
@@ -119,7 +136,7 @@ def save_blobs(**kwargs):
     return blobs
 
 
-def quick_add(url: str, archive_data=True):
+def quick_add(url: str):
     with YoutubeDL(dictionaries.ydl_opts) as ydl:
         try:
             info = ydl.extract_info(url)
@@ -137,8 +154,8 @@ def quick_add(url: str, archive_data=True):
         description = info.get('description', None)
         views = info.get('view_count', None)
         date = info.get('upload_date', None)
-        likes = info.get('like_count', 'N/A')
-        dislikes = info.get('dislike_count', 'N/A')
+        likes = info.get('like_count', None)
+        dislikes = info.get('dislike_count', None)
         thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
 
         views = f_digits(views)
@@ -149,7 +166,7 @@ def quick_add(url: str, archive_data=True):
         subscribers = None
         [profile_picture, subscribers] = additional_info(author_url, profile_picture, subscribers)
 
-        if archive_data:
+        try:
             blobs = save_blobs(
                 thumb_url=thumbnail_url,
                 thumb_ext=(str(thumbnail_url).split(".")[-1]).split('?')[0],
@@ -162,20 +179,20 @@ def quick_add(url: str, archive_data=True):
             thumbnail = b64encode(blobs[0])
             stream = b64encode(blobs[1])
             profile_picture = b64encode(blobs[2])
-        else:
+        except Exception:
             thumbnail = b''
             stream = b''
             profile_picture = b''
 
         data_dict = {
-            "video_id": video_id,
-            "url": video_url,
-            "title": title,
-            "author": author,
-            "author_url": author_url,
-            "description": description,
-            "views": views,
-            "date": date,
+            'video_id': video_id,
+            'url': video_url,
+            'title': title,
+            'author': author,
+            'author_url': author_url,
+            'description': description,
+            'views': views,
+            'date': date,
             'likes': likes,
             'dislikes': dislikes,
             'subscribers': subscribers,
@@ -185,18 +202,23 @@ def quick_add(url: str, archive_data=True):
             'profile_picture': profile_picture
         }
 
-        try:
-            register_data(**data_dict)
-            return True
-        except (IntegrityError, Exception) as e:
-            if type(e) == IntegrityError:
-                e.hide_parameters = True
-                e.code = None
-                s = str(e).split(":")[0]
-                if "UNIQUE" in s:
-                    flash('Video already exists in database', 'danger')
-                else:
-                    flash(f'{s}', 'danger')
-            else:
-                flash(f'{e}', 'danger')
-            return False
+        return register_data(**data_dict)
+
+
+def static_files(key):
+    with BytesIO() as byteStream:
+        with Image.open(join(dirname(realpath(__file__)), f'static/{key}.jpg')) as img:
+            img.save(byteStream, format='PNG')
+        return b64encode(byteStream.getvalue())
+
+
+def manual_add(form: FlaskForm):
+    data_dict = {f'{k}': v for k, v in form.data.items() if k != 'csrf_token' or k != 'submit'}
+    data_dict['video_id'] = str(data_dict['url']).split("=")[-1] if data_dict['url'] else None
+    storage_keys = ['stream', 'thumbnail', 'profile_picture']
+    for key in storage_keys:
+        if data_dict[key]:
+            data_dict[key] = b64encode(data_dict[key].read())
+        else:
+            data_dict[key] = static_files(key)
+    return register_data(**data_dict)

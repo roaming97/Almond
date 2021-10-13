@@ -20,9 +20,9 @@ class Video(db.Model):
     dislikes = db.Column(db.String(12), nullable=True)
     subscribers = db.Column(db.String(12), nullable=True)
     stream = db.Column(db.LargeBinary, unique=True, nullable=False)
-    thumbnail_url = db.Column(db.String(50), nullable=True, default='thumb.jpg')
+    thumbnail_url = db.Column(db.String(50), nullable=True)
     thumbnail = db.Column(db.LargeBinary, nullable=True)
-    profile_picture = db.Column(db.String(50), nullable=True, default='profile.jpg')
+    profile_picture = db.Column(db.LargeBinary, nullable=True)
 
     def __repr__(self):
         return f"Video(" \
