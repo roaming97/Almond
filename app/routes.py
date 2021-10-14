@@ -1,6 +1,6 @@
 from os import getenv
 
-from flask import render_template, url_for, flash, redirect, session, request, abort
+from flask import render_template, url_for, flash, redirect, session, request, abort, send_file
 
 from app import app, bcrypt, tasks, settings
 from app.dictionaries import video_sorts
@@ -151,6 +151,14 @@ def manual():
             subtitle="Manually add a record to the database.",
             form=form, prevent=settings.prevent_resend
         )
+
+
+@app.route("/download_db", methods=['GET'])
+def download_db():
+    if not access_denied() and 'admin' in session:
+        return send_file('almond.db', as_attachment=True)
+    else:
+        abort(403)
 
 
 @app.route("/logout", methods=['GET', 'POST'])
