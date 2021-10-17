@@ -17,5 +17,9 @@ def err_404(error): return r_error(error, 404)
 def err_403(error): return r_error(error, 403)
 
 
+@app.errorhandler(413)
+def err_413(error): return r_error(error, 413)
+
+
 @app.errorhandler(500)
 def err_500(error): return r_error(error, 500)

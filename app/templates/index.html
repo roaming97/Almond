@@ -79,15 +79,15 @@
         <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
         <div class="video-author d-flex align-items-center my-2">
             <img src="data:image;base64,{{video.profile_picture.decode('utf-8')}}" class="pfp mx-2 rounded-circle">
-            <p class="my-auto"><span class="text-black-50">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
+            <p class="my-auto"><span class="text-muted">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
         </div>
         {% if video.description %}
-        <p><span class="text-black-50">"</span>{% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}<span class="deco">"</span></p>
+        <p><span class="text-muted">"</span>{% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}<span class="deco">"</span></p>
         {% endif %}
-        <p><span class="text-black-50">Original upload date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
+        <p><span class="text-muted">Original upload date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
         </p>
-        <p><span class="text-black-50">Archived views:</span>&nbsp;{{video.views}}</p>
-        <p><span class="text-black-50">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
+        <p><span class="text-muted">Archived views:</span>&nbsp;{{video.views}}</p>
+        <p><span class="text-muted">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
         <div class="rating d-flex flex-row">
             <p class="m-1"><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
             <p class="m-1"><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
@@ -103,5 +103,5 @@
     <div class="pagination">{{ pag(data) }}</div>
 {% endif %}
 {% else %}
-<h3 class="text-black-50">(No videos yet)</h3>
+<h3 class="text-muted">(No videos yet)</h3>
 {% endif %} {% endblock %}
