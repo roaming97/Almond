@@ -21,7 +21,8 @@ def index():
     else:
         if Video.query.count() == 0:
             return render_template('index.html', home=True,
-                                   private=settings.private_app, prevent=settings.prevent_resend)
+                                   private=settings.private_app, prevent=settings.prevent_resend,
+                                   manual_add=settings.manual_add)
 
         page = request.args.get('page', 1, type=int)
         sort = request.args.get('sort', "newest-added", type=str)
@@ -161,13 +162,10 @@ def download_db():
         abort(403)
 
 
-@app.route("/logout", methods=['GET', 'POST'])
+@app.route("/logout", methods=['GET'])
 def logout():
     if settings.private_app:
-        session.pop("access", None)
-        session.pop("current_page", None)
-        session.pop("current_sort", None)
-        session.pop("admin", None)
+        tasks.clear_session_vars()
         flash('Logged out', 'info')
         return redirect(url_for('auth'))
     else:

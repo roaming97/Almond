@@ -8,14 +8,14 @@ from flask_admin.contrib.sqla import ModelView
 
 class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    video_id = db.Column(db.String(11), unique=True, nullable=False)
-    url = db.Column(db.String(50), unique=True, nullable=False)
+    video_id = db.Column(db.String(11), unique=True, nullable=True)
+    url = db.Column(db.String(50), unique=True, nullable=True)
     title = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(60), nullable=False)
     author_url = db.Column(db.String(60), nullable=True)
     description = db.Column(db.Text, nullable=True, default='')
-    views = db.Column(db.String(25), nullable=False)
-    date = db.Column(db.String(8), nullable=False)
+    views = db.Column(db.String(25), nullable=True)
+    date = db.Column(db.String(8), nullable=True)
     likes = db.Column(db.String(12), nullable=True)
     dislikes = db.Column(db.String(12), nullable=True)
     subscribers = db.Column(db.String(12), nullable=True)

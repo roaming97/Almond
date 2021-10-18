@@ -29,11 +29,19 @@ def init_session_vars(admin=False):
         session["admin"] = True
 
 
+def clear_session_vars():
+    session.pop("access", None)
+    session.pop("current_page", None)
+    session.pop("current_sort", None)
+    if "admin" in session:
+        session.pop("admin", None)
+
+
 def register_data(**kwargs):
     try:
         data = models.Video(
-            video_id=kwargs.get('video_id', ''),
-            url=kwargs.get('url', ''),
+            video_id=kwargs.get('video_id', None),
+            url=kwargs.get('url', None),
             title=kwargs.get('title', 'Untitled'),
             author=kwargs.get('author', 'N/A'),
             author_url=kwargs.get('author_url', ''),
@@ -53,13 +61,12 @@ def register_data(**kwargs):
         return True
     except (IntegrityError, Exception) as e:
         if type(e) == IntegrityError:
+            '''
             e.hide_parameters = True
             e.code = None
             s = str(e).split(":")[0]
-            if "UNIQUE" in s:
-                flash('Video already exists in database', 'danger')
-            else:
-                flash(f'{s}', 'danger')
+            '''
+            flash(f'{e}', 'danger')
         else:
             flash(f'{e}', 'danger')
         return False
