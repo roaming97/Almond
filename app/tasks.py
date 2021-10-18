@@ -61,12 +61,10 @@ def register_data(**kwargs):
         return True
     except (IntegrityError, Exception) as e:
         if type(e) == IntegrityError:
-            '''
             e.hide_parameters = True
             e.code = None
             s = str(e).split(":")[0]
-            '''
-            flash(f'{e}', 'danger')
+            flash(f'{s}', 'danger')
         else:
             flash(f'{e}', 'danger')
         return False
