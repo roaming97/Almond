@@ -82,9 +82,16 @@
             <p class="my-auto"><span class="text-muted">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
         </div>
         {% if video.description %}
-        <p><span class="text-muted">"</span>{% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}<span class="deco">"</span></p>
+        <p><span class="text-muted">&quot;</span>
+            {% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}
+            <span class="text-muted">&quot;</span></p>
         {% endif %}
-        <p><span class="text-muted">Original upload date:</span> {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
+        <p><span class="text-muted">Original upload date:</span>
+            {% if video.date|length == 8 %}
+                {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
+            {% else %}
+                {{video.date}}
+            {% endif %}
         </p>
         <p><span class="text-muted">Archived views:</span>&nbsp;{{video.views}}</p>
         <p><span class="text-muted">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>

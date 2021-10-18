@@ -104,7 +104,7 @@ def additional_info(*args):
     if not subs:
         subs = 'N/A'
     else:
-        for word in subs.split(" "):
+        for word in subs.split():
             if word.isnumeric():
                 subs = word
                 break
