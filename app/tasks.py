@@ -165,7 +165,8 @@ def quick_add(url: str):
 
         views = f_digits(views)
         likes = f_digits(likes)
-        dislikes = f_digits(dislikes)
+        # dislikes = f_digits(dislikes)
+        dislikes = 'N/A'
 
         profile_picture = None
         subscribers = None
