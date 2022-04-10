@@ -189,7 +189,7 @@ def quick_add(url: str):
         subscribers = None
 
         [profile_picture, subscribers, dislikes] = additional_info(author_url, profile_picture, subscribers, video_id)
-        dislikes = f_digits(dislikes) if dislikes else 'N/A'
+        dislikes = f_digits(dislikes) if dislikes is not None else 'N/A'
 
         try:
             blobs = save_blobs(
