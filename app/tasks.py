@@ -91,8 +91,11 @@ def clean_filename(title):
     return new_title
 
 
-def additional_info(*args):
+def additional_info(*args):    
+
     raw_html = httpx.get(args[0])
+    dislikes_api = httpx.get(f"https://returnyoutubedislikeapi.com/votes?videoId={args[3]}") 
+    dislikes = dislikes_api.json()['dislikes']
     a_info = []
     pfp = args[1]
     subs = args[2]
@@ -128,6 +131,7 @@ def additional_info(*args):
                     break
     a_info.append(pfp)
     a_info.append(subs)
+    a_info.append(dislikes)
     return a_info
 
 
@@ -176,17 +180,16 @@ def quick_add(url: str):
         views = info.get('view_count', None)
         date = info.get('upload_date', None)
         likes = info.get('like_count', None)
-        # dislikes = info.get('dislike_count', None)
         thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
 
         views = f_digits(views)
         likes = f_digits(likes)
-        # dislikes = f_digits(dislikes)
-        dislikes = 'N/A'
 
         profile_picture = None
         subscribers = None
-        [profile_picture, subscribers] = additional_info(author_url, profile_picture, subscribers)
+
+        [profile_picture, subscribers, dislikes] = additional_info(author_url, profile_picture, subscribers, video_id)
+        dislikes = f_digits(dislikes) if dislikes else 'N/A'
 
         try:
             blobs = save_blobs(
