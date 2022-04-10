@@ -17,10 +17,10 @@
 
 {% if data %}
 <div class="dropdown">
-    <button class="btn btn-light btn-sm dropdown-toggle my-1 px-4 border border-dark" data-bs-toggle="dropdown">
+    <button class="btn btn-dark btn-sm dropdown-toggle my-1 px-4 border border-dark" data-bs-toggle="dropdown">
             Sort
         </button>
-    <div class="dropdown-menu">
+    <div class="dropdown-menu dropdown-menu-dark">
         {% for key in sorts %} {% if current_sort == key %}
         <a class="dropdown-item disabled" href="#">{{key.title().replace("-", " ")}}</a> {% else %}
         <a class="dropdown-item" href="{{url_for('index', page=session['current_page'], sort=key)}}">
@@ -31,9 +31,9 @@
 
 {% macro pag(data) %}
     {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-dark disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
+    <a class="btn btn-info disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
     {% else %}
-    <a class="btn btn-outline-dark m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
+    <a class="btn btn-outline-info m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
     {% endif %} {% else %}
     <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
 {% endmacro %}
@@ -51,7 +51,7 @@
                         <span>{{ e }}</span>
                     {% endfor %}
                 </div>
-                {% else %} {{ form.query(class="form-control") }} {% endif %}
+                {% else %} {{ form.query(class="form-control bg-dark") }} {% endif %}
                 <div class="form-btn align-items-start">
                     {{ form.submit(class="btn btn-outline-secondary") }}
                 </div>

@@ -9,6 +9,11 @@ html {
     overflow-x: hidden
 }
 
+body {
+    color: #bbb;
+    background: #1f1f1f;
+}
+
 .rating {
     justify-content: center
 }
@@ -18,6 +23,10 @@ html {
     flex-direction: row-reverse;
     align-items: center;
     justify-content: center
+}
+
+a {
+    color: cornflowerblue;
 }
 
 .buttons a {
@@ -51,6 +60,10 @@ hr {
     margin: .5rem
 }
 
+.form-control {
+    color: #bbb !important;
+}
+
 .form-btn {
     margin: .5rem 0 0 0;
     flex-direction: column-reverse;
@@ -60,7 +73,7 @@ hr {
 .tohome:active>h1,
 .tohome:hover>h1,
 .tohome:visited>h1 {
-    color: var(--bs-body-color);
+    color: #bbb;
     text-decoration: none
 }
 
