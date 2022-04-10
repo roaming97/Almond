@@ -67,6 +67,7 @@ instance/
 .webassets-cache
 
 # youtube-dl
+output/
 *.mp4
 *.mp4.part
 *.m4a
@@ -75,6 +76,7 @@ instance/
 *.mkv.part
 *.part
 *.ytdl
+rmtemp
 
 # Scrapy stuff:
 .scrapy

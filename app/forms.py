@@ -9,7 +9,6 @@ from wtforms.validators import DataRequired, Length, URL, Regexp
 def YouTubeURLField(require: bool = True):
     val = [
         DataRequired(),
-        Length(min=28, max=43),
         URL(message=''),
         Regexp(r'^((?:https?:)?\/\/)?((?:www|m)\.)?'
                r'((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|'

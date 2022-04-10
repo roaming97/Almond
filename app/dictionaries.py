@@ -19,5 +19,6 @@ video_sorts = {
 }
 
 ydl_opts = {
-    'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
+    'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
+    'noplaylist': True
 }

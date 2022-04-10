@@ -1,4 +1,6 @@
+import os
 import re
+import sys
 import urllib.request as r
 from base64 import b64encode
 from io import BytesIO
@@ -10,10 +12,10 @@ from PIL import Image
 from flask import flash, session
 from flask_wtf import FlaskForm
 from sqlalchemy.exc import IntegrityError
-from youtube_dl import YoutubeDL
-from youtube_dl.utils import DownloadError
+from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 
-from app import db, models, dictionaries
+from app import db, models, dictionaries, settings
 
 
 def create_db():
@@ -35,6 +37,13 @@ def clear_session_vars():
     session.pop("current_sort", None)
     if "admin" in session:
         session.pop("admin", None)
+
+
+def remove_temp_files():
+    valid_formats = ('mp4', 'part', 'mkv', 'ytdl', 'm4a', 'jpg', 'png')
+    for file in os.listdir(os.getcwd()):
+        if isfile(file) and file.endswith(valid_formats):
+            remove(file)
 
 
 def register_data(**kwargs):
@@ -67,11 +76,11 @@ def register_data(**kwargs):
             flash(f'{s}', 'danger')
         else:
             flash(f'{e}', 'danger')
+        remove_temp_files()
         return False
 
 
 def f_digits(st: str): return f'{int(st):,}'
-def remove_temp_files(*args): [remove(a) for a in args if isfile(a)]
 def isfloat(s: str): return bool(re.match(r'^-?\d+(\.\d+)?$', s))
 
 
@@ -127,7 +136,7 @@ def save_blobs(**kwargs):
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
     pfp_path = f'{kwargs["vid_id"]}.{kwargs["pfp_ext"]}'
 
-    video_path = f'{clean_filename(kwargs["vid_title"])}-{kwargs["vid_id"]}.{kwargs["vid_ext"]}'
+    video_path = f'{clean_filename(kwargs["vid_title"])} [{kwargs["vid_id"]}].{kwargs["vid_ext"]}'
 
     thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
     pfp_file = r.urlretrieve(kwargs['pfp_url'], pfp_path)
@@ -137,7 +146,13 @@ def save_blobs(**kwargs):
         blobs.append(v.read())
     with open(pfp_file[0], 'rb') as p:
         blobs.append(p.read())
-    remove_temp_files(thumb_path, pfp_path, video_path)
+    if settings.keep_original_files:
+        output_path = f'./output/{kwargs["vid_id"]}'
+        os.makedirs(output_path)
+        for file in [thumb_path, pfp_path, video_path]:
+            os.replace(file, f'{os.path.join(os.getcwd(), output_path)}/{file}')
+    else:
+        remove_temp_files()
     return blobs
 
 
@@ -148,6 +163,7 @@ def quick_add(url: str):
         except DownloadError as e:
             ansi = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
             error = ansi.sub('', str(e)).replace('\n', '. ').replace('ERROR:', '')
+            remove_temp_files()
             flash(f'{error}', 'danger')
             return False
 
@@ -160,7 +176,7 @@ def quick_add(url: str):
         views = info.get('view_count', None)
         date = info.get('upload_date', None)
         likes = info.get('like_count', None)
-        dislikes = info.get('dislike_count', None)
+        # dislikes = info.get('dislike_count', None)
         thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
 
         views = f_digits(views)
@@ -185,7 +201,8 @@ def quick_add(url: str):
             thumbnail = b64encode(blobs[0])
             stream = b64encode(blobs[1])
             profile_picture = b64encode(blobs[2])
-        except Exception:
+        except Exception as e:
+            print(f'{e}', file=sys.stdout)
             thumbnail = b''
             stream = b''
             profile_picture = b''

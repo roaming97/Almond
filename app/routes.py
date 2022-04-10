@@ -114,8 +114,7 @@ def quick():
                 if tasks.quick_add(form.url.data):
                     flash('Video submitted successfully', 'success')
                     return redirect(url_for('index'))
-            except Exception as e:
-                print(f'{e}')
+            except Exception:
                 abort(500)
 
         return render_template(
@@ -142,7 +141,6 @@ def manual():
                     flash('Video submitted successfully', 'success')
                     return redirect(url_for('index'))
             except Exception as e:
-                print(f'{e}')
                 flash(f'{e}', 'danger')
                 return abort(500)
 
