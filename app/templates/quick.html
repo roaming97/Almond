@@ -10,7 +10,7 @@
                     {% for e in form.url.errors %}
                     <span>{{ e }}</span> {% endfor %}
                 </div>
-                {% else %} {{ form.url(class="form-control bg-dark", autofocus="autofocus") }} {% endif %}
+                {% else %} {{ form.url(class="form-control", autofocus="autofocus") }} {% endif %}
                 <div class="form-btn align-items-start">
                     {{ form.submit(class="btn btn-outline-success") }}
                 </div>

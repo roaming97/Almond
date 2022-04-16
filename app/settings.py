@@ -10,5 +10,7 @@ manual_add = True
 prevent_resend = True
 # Number of videos shown per page
 videos_per_page = 5
+# Number of videos shown per page in admin view
+videos_per_admin_page = 8
 # Keep the original files when archiving them (requires more disk space)
 keep_original_files = False

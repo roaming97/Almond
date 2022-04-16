@@ -1,5 +1,5 @@
 from app import db, admin
-from app.settings import private_app
+from app.settings import private_app, videos_per_admin_page
 from flask import session, abort
 from flask_admin.contrib.sqla import ModelView
 
@@ -46,7 +46,7 @@ class Video(db.Model):
 # Admin
 
 class AlmondModelView(ModelView):
-    page_size = 3
+    page_size = videos_per_admin_page
     column_exclude_list = ['stream', 'thumbnail', 'profile_picture']
     def is_accessible(self): return True if "admin" in session and private_app else abort(403)
 
