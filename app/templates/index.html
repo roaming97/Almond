@@ -4,14 +4,17 @@
         <i class="fas fa-plus-circle me-1"></i>Quick Add
     </a>
     {% if manual_add %}
-        <a href="{{ url_for('manual') }}" class="btn btn-warning" role="button">
-            <i class="fas fa-plus-circle me-1"></i>Manual Add
-        </a>
-    {% endif %}
-    {% if private %}
-        <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">
-            <i class="fas fa-sign-out-alt me-1"></i>Logout
-        </a>
+    <a href="{{ url_for('manual') }}" class="btn btn-warning" role="button">
+        <i class="fas fa-plus-circle me-1"></i>Manual Add
+    </a>
+    {% endif %} {% if remove_files %}
+    <a href="{{ url_for('cleanup') }}" class="btn btn-secondary" role="button">
+        <i class="fa fa-trash me-1"></i>Cleanup
+    </a>
+    {% endif %} {% if private %}
+    <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">
+        <i class="fas fa-sign-out-alt me-1"></i>Logout
+    </a>
     {% endif %}
 </div>
 
@@ -29,27 +32,19 @@
     </div>
 </div>
 
-{% macro pag(data) %}
-    {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
-    <a class="btn btn-info disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
-    {% else %}
-    <a class="btn btn-outline-info m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a>
-    {% endif %} {% else %}
-    <span class="mt-auto">&mldr;</span> {% endif %} {% endfor %}
-{% endmacro %}
-
-{% if form %}
+{% macro pag(data) %} {% for n in data.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} {% if n %} {% if data.page == n %}
+<a class="btn btn-info disabled m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a> {% else %}
+<a class="btn btn-outline-info m-1" href="{{url_for('index', page=n, sort=session['current_sort'])}}">{{n}}</a> {% endif %} {% else %}
+<span class="mt-auto">&mldr;</span> {% endif %} {% endfor %} {% endmacro %} {% if form %}
 <div class="form-container w-auto shadow p-2 m-3 rounded-3">
     <form action="" method="post">
         {{ form.hidden_tag() }}
-       <fieldset class="form-group d-flex">
+        <fieldset class="form-group d-flex">
             <div class="form-field search d-flex align-items-center">
-                {{ form.query.label(class="form-control-label") }}
-                {% if form.query.errors %} {{ form.query(class="form-control is-invalid") }}
+                {{ form.query.label(class="form-control-label") }} {% if form.query.errors %} {{ form.query(class="form-control is-invalid") }}
                 <div class="invalid-feedback m-1 w-auto">
                     {% for e in form.query.errors %}
-                        <span>{{ e }}</span>
-                    {% endfor %}
+                    <span>{{ e }}</span> {% endfor %}
                 </div>
                 {% else %} {{ form.query(class="form-control") }} {% endif %}
                 <div class="form-btn align-items-start">
@@ -59,13 +54,9 @@
         </fieldset>
     </form>
 </div>
-{% endif %}
-
-{% if show_paginator %}
-    <div class="pagination">{{ pag(data) }}</div>
-{% endif %}
-
-{% for video in data.items %}
+{% endif %} {% if show_paginator %}
+<div class="pagination">{{ pag(data) }}</div>
+{% endif %} {% for video in data.items %}
 <div class="video d-flex rounded-3 shadow-lg">
     <div class="video-data">
         <h3><a href=watch/{{video.id}}>
@@ -82,16 +73,10 @@
             <p class="my-auto"><span class="text-muted">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
         </div>
         {% if video.description %}
-        <p><span class="text-muted">&quot;</span>
-            {% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}
+        <p><span class="text-muted">&quot;</span> {% if video.description|length>120 %} {{video.description[:120]}}... {% else %} {{video.description}} {% endif %}
             <span class="text-muted">&quot;</span></p>
         {% endif %}
-        <p><span class="text-muted">Original upload date:</span>
-            {% if video.date|length == 8 %}
-                {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}}
-            {% else %}
-                {{video.date}}
-            {% endif %}
+        <p><span class="text-muted">Original upload date:</span> {% if video.date|length == 8 %} {{video.date[4:6]}}-{{video.date[6:8]}}-{{video.date[0:4]}} {% else %} {{video.date}} {% endif %}
         </p>
         <p><span class="text-muted">Archived views:</span>&nbsp;{{video.views}}</p>
         <p><span class="text-muted">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
@@ -105,10 +90,8 @@
         <a href="{{video.thumbnail_url}}" target="_blank">Thumbnail source</a> {% endif %}
     </div>
 </div>
-{% endfor %}
-{% if show_paginator %}
-    <div class="pagination">{{ pag(data) }}</div>
-{% endif %}
-{% else %}
+{% endfor %} {% if show_paginator %}
+<div class="pagination">{{ pag(data) }}</div>
+{% endif %} {% else %}
 <h3 class="text-muted">(No videos yet)</h3>
 {% endif %} {% endblock %}

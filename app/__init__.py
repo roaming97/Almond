@@ -1,3 +1,4 @@
+import logging
 from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
@@ -8,6 +9,7 @@ from flask_bcrypt import Bcrypt
 from flask_admin import Admin
 
 from app import forms
+
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = getenv("SECRET")
@@ -21,6 +23,8 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 admin = Admin(app, template_mode='bootstrap4')
 
+logging.basicConfig(filename='almond.log', filemode='w', format='%(levelname)s - %(message)s', level=logging.DEBUG)
+logging.getLogger(app.logger.name)
 from app.settings import auto_db
 
 from app.tasks import create_db

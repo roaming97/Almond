@@ -1,6 +1,6 @@
+import logging
 import os
 import re
-import sys
 import urllib.request as r
 from base64 import b64encode
 from io import BytesIO
@@ -42,6 +42,8 @@ def clear_session_vars():
 def remove_temp_files():
     valid_formats = ('mp4', 'part', 'mkv', 'ytdl', 'm4a', 'jpg', 'png')
     for file in os.listdir(os.getcwd()):
+        if file in os.listdir('static'):
+            continue
         if isfile(file) and file.endswith(valid_formats):
             remove(file)
 
@@ -67,6 +69,7 @@ def register_data(**kwargs):
         )
         db.session.add(data)
         db.session.commit()
+        remove_temp_files()
         return True
     except (IntegrityError, Exception) as e:
         if type(e) == IntegrityError:
@@ -74,8 +77,10 @@ def register_data(**kwargs):
             e.code = None
             s = str(e).split(":")[0]
             flash(f'{s}', 'danger')
+            logging.error(e)
         else:
             flash(f'{e}', 'danger')
+            logging.error(e)
         remove_temp_files()
         return False
 
@@ -91,73 +96,71 @@ def clean_filename(title):
     return new_title
 
 
-def additional_info(*args):    
+def format_subscribers(subs):
+    for word in subs.split():
+        if word.isnumeric():
+            subs = word
+            break
+        elif isfloat(word):
+            subs = f'{word}M'
+            break
 
-    raw_html = httpx.get(args[0])
-    dislikes_api = httpx.get(f"https://returnyoutubedislikeapi.com/votes?videoId={args[3]}") 
+        if not word.isalnum():
+            raw_word = re.sub(r'(\d),(\d)', r'\1\2', word)
+            if raw_word.isnumeric():
+                subs = word
+                break
+    return subs
+
+
+def additional_info(*args):
+    # dirty trick, reminder to open an issue in the httpx repo
+    html = httpx.get(args[0].replace('http://', 'https://')).text
+
+    dislikes_api = httpx.get(f"https://returnyoutubedislikeapi.com/votes?videoId={args[1]}")
     dislikes = dislikes_api.json()['dislikes']
-    a_info = []
-    pfp = args[1]
-    subs = args[2]
+    logging.debug(dislikes)
 
     pfp_regex = r'((avatar":{"thumbnails":\[{"url":")(https(.+?))(s48))'
-    subscribers_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"},"t)'
-    subscribers_regex_2 = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
+    pfp = next(re.finditer(pfp_regex, html)).group(3) + "s800-c-k-c0x00ffffff-no-rj"
+    logging.debug(f"PROFILE_PIC: {pfp}")
 
-    for profile_picture_search in re.finditer(pfp_regex, str(raw_html.text)):
-        pfp = profile_picture_search.group(3) + "s1000-c-k-c0x00ffffff-no-rj"
-
-    for subscribers_count_search in re.finditer(subscribers_regex, str(raw_html.text)):
-        subs = subscribers_count_search.group(2)
-
-    for subscribers_count_search in re.finditer(subscribers_regex_2, str(raw_html.text)):
-        subs = subscribers_count_search.group(3)
+    subscribers_regex = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
+    subs = next(re.finditer(subscribers_regex, html)).group(3).split()[0]
+    logging.debug(f"SUBSCRIBERS: {subs}")
 
     if not subs:
         subs = 'N/A'
-    else:
-        for word in subs.split():
-            if word.isnumeric():
-                subs = word
-                break
-            elif isfloat(word):
-                subs = f'{word}M'
-                break
-
-            if not word.isalnum():
-                raw_word = re.sub(r'(\d),(\d)', r'\1\2', word)
-                if raw_word.isnumeric():
-                    subs = word
-                    break
-    a_info.append(pfp)
-    a_info.append(subs)
-    a_info.append(dislikes)
-    return a_info
+    
+    return pfp, subs, dislikes
 
 
 def save_blobs(**kwargs):
     blobs = []
+
     thumb_path = f'{kwargs["vid_id"]}.{kwargs["thumb_ext"]}'
     pfp_path = f'{kwargs["vid_id"]}.{kwargs["pfp_ext"]}'
-
     video_path = f'{clean_filename(kwargs["vid_title"])} [{kwargs["vid_id"]}].{kwargs["vid_ext"]}'
 
-    thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)
-    pfp_file = r.urlretrieve(kwargs['pfp_url'], pfp_path)
-    with open(thumb_file[0], 'rb') as t:
-        blobs.append(t.read())
-    with open(video_path, 'rb') as v:
-        blobs.append(v.read())
-    with open(pfp_file[0], 'rb') as p:
-        blobs.append(p.read())
-    if settings.keep_original_files:
-        output_path = f'./output/{kwargs["vid_id"]}'
-        os.makedirs(output_path)
-        for file in [thumb_path, pfp_path, video_path]:
+    thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)[0]
+    pfp_file = r.urlretrieve(kwargs['pfp_url'], pfp_path)[0]
+
+    for file in [thumb_file, video_path, pfp_file]:
+        with open(file, 'rb') as f:
+            blobs.append(f.read())
+        if settings.keep_original_files:
+            output_path = f'./output/{kwargs["vid_id"]}'
+            os.makedirs(output_path)
             os.replace(file, f'{os.path.join(os.getcwd(), output_path)}/{file}')
-    else:
-        remove_temp_files()
+
     return blobs
+
+
+def static_files(key):
+    with BytesIO() as byteStream:
+        with Image.open(join(dirname(realpath(__file__)), f'static{os.sep}{key}.jpg')) as img:
+            img.save(byteStream, format='PNG')
+        return b64encode(byteStream.getvalue())
 
 
 def quick_add(url: str):
@@ -177,18 +180,15 @@ def quick_add(url: str):
         author = info.get('uploader', None)
         author_url = info.get('uploader_url', None)
         description = info.get('description', None)
-        views = info.get('view_count', None)
+        views = info.get('view_count', 'N/A')
         date = info.get('upload_date', None)
-        likes = info.get('like_count', None)
+        likes = info.get('like_count', 'N/A')
         thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
 
         views = f_digits(views)
         likes = f_digits(likes)
 
-        profile_picture = None
-        subscribers = None
-
-        [profile_picture, subscribers, dislikes] = additional_info(author_url, profile_picture, subscribers, video_id)
+        profile_picture, subscribers, dislikes = additional_info(author_url, video_id)
         dislikes = f_digits(dislikes) if dislikes is not None else 'N/A'
 
         try:
@@ -205,10 +205,10 @@ def quick_add(url: str):
             stream = b64encode(blobs[1])
             profile_picture = b64encode(blobs[2])
         except Exception as e:
-            print(f'{e}', file=sys.stdout)
-            thumbnail = b''
+            logging.error(e)
+            thumbnail = static_files('thumbnail')
             stream = b''
-            profile_picture = b''
+            profile_picture = static_files('profile_picture')
 
         data_dict = {
             'video_id': video_id,
@@ -229,13 +229,6 @@ def quick_add(url: str):
         }
 
         return register_data(**data_dict)
-
-
-def static_files(key):
-    with BytesIO() as byteStream:
-        with Image.open(join(dirname(realpath(__file__)), f'static/{key}.jpg')) as img:
-            img.save(byteStream, format='PNG')
-        return b64encode(byteStream.getvalue())
 
 
 def manual_add(form: FlaskForm):

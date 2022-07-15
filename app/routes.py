@@ -1,3 +1,4 @@
+import logging
 from os import getenv
 
 from flask import render_template, url_for, flash, redirect, session, request, abort, send_file
@@ -55,7 +56,8 @@ def index():
                                    private=settings.private_app, data=data,
                                    show_paginator=with_paginator, form=form,
                                    sorts=video_sorts, current_sort=session["current_sort"],
-                                   prevent=settings.prevent_resend, manual_add=settings.manual_add)
+                                   prevent=settings.prevent_resend, manual_add=settings.manual_add,
+                                   remove_files='admin' in session)
 
         return render_index(with_paginator=True) if data.total > settings.videos_per_page else render_index()
 
@@ -114,7 +116,9 @@ def quick():
                 if tasks.quick_add(form.url.data):
                     flash('Video submitted successfully', 'success')
                     return redirect(url_for('index'))
-            except Exception:
+            except Exception as e:
+                flash(str(e), 'danger')
+                logging.error(e)
                 abort(500)
 
         return render_template(
@@ -141,7 +145,7 @@ def manual():
                     flash('Video submitted successfully', 'success')
                     return redirect(url_for('index'))
             except Exception as e:
-                flash(f'{e}', 'danger')
+                flash(str(e), 'danger')
                 return abort(500)
 
         return render_template(
@@ -150,6 +154,16 @@ def manual():
             subtitle="Manually add a record to the database.",
             form=form, prevent=settings.prevent_resend
         )
+
+
+@app.route("/cleanup", methods=['GET'])
+def cleanup():
+    if not access_denied() and 'admin' in session:
+        tasks.remove_temp_files() 
+        flash('Temporary files removed', 'success')
+        return redirect(url_for('index'))
+    else:
+        abort(403)
 
 
 @app.route("/download_db", methods=['GET'])
