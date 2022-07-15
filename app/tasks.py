@@ -42,8 +42,6 @@ def clear_session_vars():
 def remove_temp_files():
     valid_formats = ('mp4', 'part', 'mkv', 'ytdl', 'm4a', 'jpg', 'png')
     for file in os.listdir(os.getcwd()):
-        if file in os.listdir('static'):
-            continue
         if isfile(file) and file.endswith(valid_formats):
             remove(file)
 
