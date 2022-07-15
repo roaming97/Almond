@@ -13,7 +13,7 @@ Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
 greenlet==1.1.1
 h11==0.12.0
-httpcore==0.14.7
+httpcore==0.15.0
 httpx==0.23.0
 idna==3.2
 itsdangerous==2.0.1

@@ -124,12 +124,12 @@ def additional_info(*args):
     logging.debug(f"PROFILE_PIC: {pfp}")
 
     subscribers_regex = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
-    subs = next(re.finditer(subscribers_regex, html)).group(3).split()[0]
+    try:
+        subs = next(re.finditer(subscribers_regex, html)).group(3).split()[0]
+    except StopIteration:
+        subs = 'N/A'
     logging.debug(f"SUBSCRIBERS: {subs}")
 
-    if not subs:
-        subs = 'N/A'
-    
     return pfp, subs, dislikes
 
 
@@ -146,10 +146,13 @@ def save_blobs(**kwargs):
     for file in [thumb_file, video_path, pfp_file]:
         with open(file, 'rb') as f:
             blobs.append(f.read())
-        if settings.keep_original_files:
-            output_path = f'./output/{kwargs["vid_id"]}'
-            os.makedirs(output_path)
-            os.replace(file, f'{os.path.join(os.getcwd(), output_path)}/{file}')
+
+    if settings.keep_original_files:
+        for file in [thumb_path, pfp_path, video_path]:
+            output_path = f'output/{kwargs["vid_id"]}'
+            if not os.path.exists(output_path):
+                os.makedirs(output_path)
+            os.replace(file, f'{os.path.join(os.getcwd(), output_path)}{os.sep}{file}')
 
     return blobs
 
