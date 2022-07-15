@@ -123,11 +123,15 @@ def additional_info(*args):
     pfp = next(re.finditer(pfp_regex, html)).group(3) + "s800-c-k-c0x00ffffff-no-rj"
     logging.debug(f"PROFILE_PIC: {pfp}")
 
-    subscribers_regex = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
+    subs_regex = r'}}},"trackingParams":"(.+?)(="}},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"})'
     try:
-        subs = next(re.finditer(subscribers_regex, html)).group(3).split()[0]
+        subs = next(re.finditer(subs_regex, html)).group(3).split()[0]
     except StopIteration:
-        subs = 'N/A'
+        try:
+            subs_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"},"t)'
+            subs = format_subscribers(next(re.finditer(subs_regex, html)).group(2).split()[0])
+        except StopIteration:
+            subs = 'N/A'
     logging.debug(f"SUBSCRIBERS: {subs}")
 
     return pfp, subs, dislikes
