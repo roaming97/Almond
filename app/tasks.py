@@ -5,21 +5,21 @@ import urllib.request as r
 from base64 import b64encode
 from io import BytesIO
 from os import getenv, remove
-from os.path import exists, isfile, join, dirname, realpath
+from os.path import dirname, exists, isfile, join, realpath
 
 import httpx
-from PIL import Image
 from flask import flash, session
 from flask_wtf import FlaskForm
+from PIL import Image
 from sqlalchemy.exc import IntegrityError
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 
-from app import db, models, dictionaries, settings
+from app import db, dictionaries, models, settings
 
 
 def create_db():
-    if not exists(getenv('DATABASE_URI')):
+    if not exists(getenv("DATABASE_URI")):
         db.create_all()
 
 
@@ -40,7 +40,7 @@ def clear_session_vars():
 
 
 def remove_temp_files():
-    valid_formats = ('mp4', 'part', 'mkv', 'ytdl', 'm4a', 'jpg', 'png')
+    valid_formats = ("mp4", "part", "mkv", "ytdl", "m4a", "jpg", "png")
     for file in os.listdir(os.getcwd()):
         if isfile(file) and file.endswith(valid_formats):
             remove(file)
@@ -49,21 +49,21 @@ def remove_temp_files():
 def register_data(**kwargs):
     try:
         data = models.Video(
-            video_id=kwargs.get('video_id', None),
-            url=kwargs.get('url', None),
-            title=kwargs.get('title', 'Untitled'),
-            author=kwargs.get('author', 'N/A'),
-            author_url=kwargs.get('author_url', ''),
-            description=kwargs.get('description', ''),
-            views=kwargs.get('views', 'N/A'),
-            date=kwargs.get('date', 'N/A'),
-            likes=kwargs.get('likes', 'N/A'),
-            dislikes=kwargs.get('dislikes', 'N/A'),
-            subscribers=kwargs.get('subscribers', 'N/A'),
-            stream=kwargs['stream'],
-            thumbnail_url=kwargs.get('thumbnail_url', ''),
-            thumbnail=kwargs.get('thumbnail', b''),
-            profile_picture=kwargs.get('profile_picture', b'')
+            video_id=kwargs.get("video_id", None),
+            url=kwargs.get("url", None),
+            title=kwargs.get("title", "Untitled"),
+            author=kwargs.get("author", "N/A"),
+            author_url=kwargs.get("author_url", ""),
+            description=kwargs.get("description", ""),
+            views=kwargs.get("views", "N/A"),
+            date=kwargs.get("date", "N/A"),
+            likes=kwargs.get("likes", "N/A"),
+            dislikes=kwargs.get("dislikes", "N/A"),
+            subscribers=kwargs.get("subscribers", "N/A"),
+            stream=kwargs["stream"],
+            thumbnail_url=kwargs.get("thumbnail_url", ""),
+            thumbnail=kwargs.get("thumbnail", b""),
+            profile_picture=kwargs.get("profile_picture", b""),
         )
         db.session.add(data)
         db.session.commit()
@@ -74,17 +74,21 @@ def register_data(**kwargs):
             e.hide_parameters = True
             e.code = None
             s = str(e).split(":")[0]
-            flash(f'{s}', 'danger')
+            flash(f"Integrity error: {s}", "danger")
             logging.error(e)
         else:
-            flash(f'{e}', 'danger')
+            flash(f"Failed to register data: {e}", "danger")
             logging.error(e)
         remove_temp_files()
         return False
 
 
-def f_digits(st: str): return f'{int(st):,}'
-def isfloat(s: str): return bool(re.match(r'^-?\d+(\.\d+)?$', s))
+def f_digits(st: str):
+    return f"{int(st):,}"
+
+
+def isfloat(s: str):
+    return bool(re.match(r"^-?\d+(\.\d+)?$", s))
 
 
 def clean_filename(title):
@@ -100,11 +104,11 @@ def format_subscribers(subs):
             subs = word
             break
         elif isfloat(word):
-            subs = f'{word}M'
+            subs = f"{word}M"
             break
 
         if not word.isalnum():
-            raw_word = re.sub(r'(\d),(\d)', r'\1\2', word)
+            raw_word = re.sub(r"(\d),(\d)", r"\1\2", word)
             if raw_word.isnumeric():
                 subs = word
                 break
@@ -113,10 +117,12 @@ def format_subscribers(subs):
 
 def additional_info(*args):
     # dirty trick, reminder to open an issue in the httpx repo
-    html = httpx.get(args[0].replace('http://', 'https://')).text
+    html = httpx.get(args[0].replace("http://", "https://")).text
 
-    dislikes_api = httpx.get(f"https://returnyoutubedislikeapi.com/votes?videoId={args[1]}")
-    dislikes = dislikes_api.json()['dislikes']
+    dislikes_api = httpx.get(
+        f"https://returnyoutubedislikeapi.com/votes?videoId={args[1]}"
+    )
+    dislikes = dislikes_api.json()["dislikes"]
     logging.debug(dislikes)
 
     pfp_regex = r'((avatar":{"thumbnails":\[{"url":")(https(.+?))(s48))'
@@ -129,9 +135,11 @@ def additional_info(*args):
     except StopIteration:
         try:
             subs_regex = r'("},"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"(.+?)"}},(.+?)"},"t)'
-            subs = format_subscribers(next(re.finditer(subs_regex, html)).group(2).split()[0])
+            subs = format_subscribers(
+                next(re.finditer(subs_regex, html)).group(2).split()[0]
+            )
         except StopIteration:
-            subs = 'N/A'
+            subs = "0"  # can't hide subs anymore
     logging.debug(f"SUBSCRIBERS: {subs}")
 
     return pfp, subs, dislikes
@@ -144,11 +152,11 @@ def save_blobs(**kwargs):
     pfp_path = f'{kwargs["vid_id"]}.{kwargs["pfp_ext"]}'
     video_path = f'{clean_filename(kwargs["vid_title"])} [{kwargs["vid_id"]}].{kwargs["vid_ext"]}'
 
-    thumb_file = r.urlretrieve(kwargs['thumb_url'], thumb_path)[0]
-    pfp_file = r.urlretrieve(kwargs['pfp_url'], pfp_path)[0]
+    thumb_file = r.urlretrieve(kwargs["thumb_url"], thumb_path)[0]
+    pfp_file = r.urlretrieve(kwargs["pfp_url"], pfp_path)[0]
 
     for file in [thumb_file, video_path, pfp_file]:
-        with open(file, 'rb') as f:
+        with open(file, "rb") as f:
             blobs.append(f.read())
 
     if settings.keep_original_files:
@@ -156,93 +164,101 @@ def save_blobs(**kwargs):
             output_path = f'output/{kwargs["vid_id"]}'
             if not os.path.exists(output_path):
                 os.makedirs(output_path)
-            os.replace(file, f'{os.path.join(os.getcwd(), output_path)}{os.sep}{file}')
+            os.replace(file, f"{os.path.join(os.getcwd(), output_path)}{os.sep}{file}")
 
     return blobs
 
 
 def static_files(key):
     with BytesIO() as byteStream:
-        with Image.open(join(dirname(realpath(__file__)), f'static{os.sep}{key}.jpg')) as img:
-            img.save(byteStream, format='PNG')
+        with Image.open(
+            join(dirname(realpath(__file__)), f"static{os.sep}{key}.jpg")
+        ) as img:
+            img.save(byteStream, format="PNG")
         return b64encode(byteStream.getvalue())
 
 
-def quick_add(url: str):
+def quick_add(url: str) -> None:
     with YoutubeDL(dictionaries.ydl_opts) as ydl:
         try:
             info = ydl.extract_info(url)
         except DownloadError as e:
-            ansi = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-            error = ansi.sub('', str(e)).replace('\n', '. ').replace('ERROR:', '')
+            ansi = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+            error = ansi.sub("", str(e)).replace("\n", ". ").replace("ERROR:", "")
             remove_temp_files()
-            flash(f'{error}', 'danger')
+            flash(f"Download error: {error}", "danger")
             return False
 
-        video_id = info.get('id', None)
-        video_url = info.get('webpage_url', None)
-        title = info.get('title', None)
-        author = info.get('uploader', None)
-        author_url = info.get('uploader_url', None)
-        description = info.get('description', None)
-        views = info.get('view_count', 'N/A')
-        date = info.get('upload_date', None)
-        likes = info.get('like_count', 'N/A')
-        thumbnail_url = str(info.get('thumbnails', None)[0]['url']).split("?")[0]
+        video_id = info.get("id", None)
+        video_url = info.get("webpage_url", None)
+        title = info.get("title", None)
+        author = info.get("uploader", None)
+        author_url = info.get("uploader_url", None)
+        description = info.get("description", None)
+        views = info.get("view_count", "N/A")
+        date = info.get("upload_date", None)
+        likes = info.get("like_count", None)
+        thumbnail_url = str(info.get("thumbnails", None)[0]["url"]).split("?")[0]
 
         views = f_digits(views)
-        likes = f_digits(likes)
+        likes = f_digits(likes) if likes is not None else "N/A"
 
         profile_picture, subscribers, dislikes = additional_info(author_url, video_id)
-        dislikes = f_digits(dislikes) if dislikes is not None else 'N/A'
+        dislikes = (
+            f_digits(dislikes) if dislikes is not None and likes != "N/A" else "N/A"
+        )
 
         try:
             blobs = save_blobs(
                 thumb_url=thumbnail_url,
-                thumb_ext=(str(thumbnail_url).split(".")[-1]).split('?')[0],
+                thumb_ext=(str(thumbnail_url).split(".")[-1]).split("?")[0],
                 vid_id=video_id,
                 vid_title=title,
                 vid_ext=info["ext"],
                 pfp_url=profile_picture,
-                pfp_ext="png"
+                pfp_ext="png",
             )
             thumbnail = b64encode(blobs[0])
             stream = b64encode(blobs[1])
             profile_picture = b64encode(blobs[2])
         except Exception as e:
-            logging.error(e)
-            thumbnail = static_files('thumbnail')
-            stream = b''
-            profile_picture = static_files('profile_picture')
+            logging.error(f"Blob save error: {e}")
+            thumbnail = static_files("thumbnail")
+            stream = b""
+            profile_picture = static_files("profile_picture")
 
         data_dict = {
-            'video_id': video_id,
-            'url': video_url,
-            'title': title,
-            'author': author,
-            'author_url': author_url,
-            'description': description,
-            'views': views,
-            'date': date,
-            'likes': likes,
-            'dislikes': dislikes,
-            'subscribers': subscribers,
-            'stream': stream,
-            'thumbnail_url': thumbnail_url,
-            'thumbnail': thumbnail,
-            'profile_picture': profile_picture
+            "video_id": video_id,
+            "url": video_url,
+            "title": title,
+            "author": author,
+            "author_url": author_url,
+            "description": description,
+            "views": views,
+            "date": date,
+            "likes": likes,
+            "dislikes": dislikes,
+            "subscribers": subscribers,
+            "stream": stream,
+            "thumbnail_url": thumbnail_url,
+            "thumbnail": thumbnail,
+            "profile_picture": profile_picture,
         }
 
-        return register_data(**data_dict)
+        register_data(**data_dict)
 
 
-def manual_add(form: FlaskForm):
-    data_dict = {f'{k}': v for k, v in form.data.items() if k != 'csrf_token' or k != 'submit'}
-    data_dict['video_id'] = str(data_dict['url']).split("=")[-1] if data_dict['url'] else None
-    storage_keys = ['stream', 'thumbnail', 'profile_picture']
+def manual_add(form: FlaskForm) -> None:
+    data_dict = {
+        f"{k}": v for k, v in form.data.items() if k != "csrf_token" or k != "submit"
+    }
+    data_dict["video_id"] = (
+        str(data_dict["url"]).split("=")[-1] if data_dict["url"] else None
+    )
+    storage_keys = ["stream", "thumbnail", "profile_picture"]
     for key in storage_keys:
         if data_dict[key]:
             data_dict[key] = b64encode(data_dict[key].read())
         else:
             data_dict[key] = static_files(key)
-    return register_data(**data_dict)
+    register_data(**data_dict)

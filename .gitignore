@@ -125,6 +125,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env.*
+!.env.example
 
 # Spyder project settings
 .spyderproject
@@ -152,3 +154,10 @@ cython_debug/
 
 # PyCharm cache
 .idea/
+
+# Client
+.DS_Store
+node_modules/
+.svelte-kit/
+package/
+.vscode

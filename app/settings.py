@@ -9,8 +9,8 @@ manual_add = True
 # Prevent forms across the app from asking form resending confirmations and clears the form input instead
 prevent_resend = True
 # Number of videos shown per page
-videos_per_page = 5
+videos_per_page = 10
 # Number of videos shown per page in admin view
-videos_per_admin_page = 8
+videos_per_admin_page = 10
 # Keep the original files when archiving them (requires more disk space)
-keep_original_files = False 
+keep_original_files = False

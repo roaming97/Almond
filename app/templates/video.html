@@ -7,7 +7,7 @@
 <div class="video-info">
     <h2>{{video_data.title}}</h2>
     {% if video_data.url %}
-        <a href={{video_data.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
+        <a href={{video_data.url}} target="_blank"><span class="iconify" data-icon="ion:logo-youtube"></span>&nbsp;Watch on YouTube</a> {% endif %}
         <div class="video-author d-flex align-items-center justify-content-center my-2">
             <img src="data:image;base64,{{video_data.profile_picture.decode('utf-8')}}" class="pfp mx-2 rounded-circle">
             <p class="my-auto"><span class="text-muted">By</span>&nbsp;
@@ -27,8 +27,8 @@
         </p>
     <p><span class="text-muted">Archived views:</span>&nbsp;{{video_data.views}}</p>
     <div class="rating d-flex flex-row">
-        <p class="m-1"><i class="fas fa-thumbs-up"></i>&nbsp;{{video_data.likes}}</p>
-        <p class="m-1"><i class="fas fa-thumbs-down"></i>&nbsp;{{video_data.dislikes}}</p>
+        <p class="m-1"><span class="iconify" data-icon="material-symbols:thumb-up-rounded"></span>&nbsp;{{video_data.likes}}</p>
+        <p class="m-1"><span class="iconify" data-icon="material-symbols:thumb-down-rounded"></span>&nbsp;{{video_data.dislikes}}</p>
     </div>
 </div>
 {% endblock %}

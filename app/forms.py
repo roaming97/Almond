@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, SubmitField, PasswordField, TextField
+from wtforms import StringField, SubmitField, PasswordField, TextAreaField
 from wtforms.validators import DataRequired, Length, URL, Regexp
 
 
@@ -35,14 +35,14 @@ class QuickAddForm(FlaskForm):
 
 
 class ManualAddForm(FlaskForm):
-    title = TextField('Video title', validators=[DataRequired()])
+    title = StringField('Video title', validators=[DataRequired()])
     stream = FileField('Video file', validators=[FileRequired(), FileAllowed(['mp4', 'webm'])])
     thumbnail = FileField('Thumbnail file', validators=[FileAllowed(['jpg', 'png'])])
     profile_picture = FileField('Profile picture file', validators=[FileAllowed(['jpg', 'png'])])
     url = YouTubeURLField(require=False)
     author = StringField('Author', validators=[DataRequired(), Length(max=60)])
     author_url = StringField('Author URL', validators=[Length(max=60)])
-    description = TextField('Description')
+    description = TextAreaField('Description')
     views = StringField('Archived views', validators=[Length(max=25)])
     date = StringField('Original upload date (yyyymmdd)', validators=[Length(max=8)])
     likes = StringField('Likes', validators=[Length(max=12)])

@@ -1,0 +1,181 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    top: 0
+}
+
+body,
+html {
+    overflow-x: hidden
+}
+
+.rating {
+    justify-content: center
+}
+
+.buttons {
+    width: 100%;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center
+}
+
+.buttons a {
+    margin: .1rem
+}
+
+.alert,
+.form-container,
+.video-container .video-info,
+.video-container video,
+hr {
+    width: 100%
+}
+
+.form-group {
+    flex-direction: column
+}
+
+.invalid-feedback {
+    font-size: .75rem;
+    text-align: center
+}
+
+.form-field {
+    flex-direction: column
+}
+
+.form-control-label {
+    font-size: .75rem;
+    text-align: center;
+    margin: .5rem
+}
+
+.form-btn {
+    margin: .5rem 0 0 0;
+    flex-direction: column-reverse;
+}
+
+.tohome,
+.tohome:active>h1,
+.tohome:hover>h1,
+.tohome:visited>h1 {
+    color: var(--bs-body-color);
+    text-decoration: none
+}
+
+.video {
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    padding: .5rem;
+    margin: 2rem
+}
+
+.video-info {
+    max-width: 80vw;
+}
+
+.video p {
+    font-size: .75rem
+}
+
+.video-author {
+    flex-direction: column
+}
+
+.video-thumb img {
+    width: 200px;
+    height: auto
+}
+
+.pfp {
+    width: 40px;
+    height: auto
+}
+
+.video-container {
+    margin: .5rem
+}
+
+.video-container .video-info {
+    align-items: center
+}
+
+.video-info .rating {
+    justify-content: center
+}
+
+@media (min-width:1000px) {
+    .content {
+        max-width: 1000px
+    }
+    .video-data {
+        width: 75%
+    }
+    .dropdown {
+        width: 85%;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: flex-start
+    }
+    .video-thumb {
+        width: 25%;
+        margin: auto
+    }
+    .video {
+        width: 75%;
+        flex-direction: row;
+        align-items: initial;
+        padding: 1.5rem;
+        text-align: left
+    }
+    .video p {
+        font-size: 1rem
+    }
+    .video-author {
+        flex-direction: row
+    }
+    .rating {
+        justify-content: initial
+    }
+    .video-container {
+        margin: 1.5rem
+    }
+    .video-container video {
+        width: auto;
+        min-width: 25vw;
+        max-width: 60vw
+    }
+    .buttons {
+        width: 85%;
+        flex-direction: row-reverse;
+        align-items: flex-start;
+        justify-content: initial
+    }
+    .invalid-feedback {
+        text-align: left
+    }
+    .alert,
+    .form-container {
+        width: 85%
+    }
+    .form-field {
+        flex-direction: row
+    }
+    .form-group {
+        flex-direction: column
+    }
+    .form-control-label {
+        text-align: center;
+        margin: .5rem;
+        margin-right: 1rem
+    }
+    .form-control {
+        width: 70%
+    }
+    .form-btn {
+        margin: .75rem;
+        flex-direction: row-reverse;
+    }
+}

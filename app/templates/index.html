@@ -1,19 +1,23 @@
 {% extends 'template.html' %} {% block content %}
 <div class="buttons d-flex m-2">
     <a href="{{ url_for('quick') }}" class="btn btn-primary" role="button">
-        <i class="fas fa-plus-circle me-1"></i>Quick Add
+        <span class="iconify" data-icon="material-symbols:add-circle-sharp"></span>
+        <span>Quick Add</span>
     </a>
     {% if manual_add %}
     <a href="{{ url_for('manual') }}" class="btn btn-warning" role="button">
-        <i class="fas fa-plus-circle me-1"></i>Manual Add
+        <span class="iconify" data-icon="material-symbols:add-circle-sharp"></span>
+        <span>Manual Add</span>
     </a>
     {% endif %} {% if remove_files %}
     <a href="{{ url_for('cleanup') }}" class="btn btn-secondary" role="button">
-        <i class="fa fa-trash me-1"></i>Cleanup
+        <span class="iconify" data-icon="carbon:clean"></span>
+        <span>Cleanup</span>
     </a>
     {% endif %} {% if private %}
     <a href="{{ url_for('logout') }}" class="btn btn-danger" role="button">
-        <i class="fas fa-sign-out-alt me-1"></i>Logout
+        <span class="iconify" data-icon="material-symbols:logout"></span>
+        <span>Logout</span>
     </a>
     {% endif %}
 </div>
@@ -67,7 +71,7 @@
                 {% endif %}
             </a></h3>
         {% if video.url %}
-        <a href={{video.url}} target="_blank"><i class="fab fa-youtube"></i>&nbsp;Watch on YouTube</a> {% endif %}
+        <a href={{video.url}} target="_blank"><span class="iconify" data-icon="ion:logo-youtube"></span>&nbsp;Watch on YouTube</a> {% endif %}
         <div class="video-author d-flex align-items-center my-2">
             <img src="data:image;base64,{{video.profile_picture.decode('utf-8')}}" class="pfp mx-2 rounded-circle">
             <p class="my-auto"><span class="text-muted">By</span>&nbsp;<a href={{video.author_url}} target="_blank">{{video.author}}</a></p>
@@ -81,8 +85,8 @@
         <p><span class="text-muted">Archived views:</span>&nbsp;{{video.views}}</p>
         <p><span class="text-muted">Archived subscribers:</span>&nbsp;{{video.subscribers}}</p>
         <div class="rating d-flex flex-row">
-            <p class="m-1"><i class="fas fa-thumbs-up"></i>&nbsp;{{video.likes}}</p>
-            <p class="m-1"><i class="fas fa-thumbs-down"></i>&nbsp;{{video.dislikes}}</p>
+            <p class="m-1"><span class="iconify" data-icon="material-symbols:thumb-up-rounded"></span>&nbsp;{{video.likes}}</p>
+            <p class="m-1"><span class="iconify" data-icon="material-symbols:thumb-down-rounded"></span>&nbsp;{{video.dislikes}}</p>
         </div>
     </div>
     <div class="video-thumb d-flex flex-column m-2 align-items-center my-auto">
